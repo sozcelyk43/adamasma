@@ -1,0 +1,1307 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kelime Avı</title>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      overscroll-behavior-y: none;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      height: 100vh;
+      overflow: hidden;
+    }<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kelime Avı</title>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error('loadFileData error:', e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+  </script>
+  <style>
+    body {
+      overscroll-behavior-y: none;
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .grid {
+      touch-action: pan-x pan-y;
+    }
+  </style>
+</head>
+<body className="h-[100vh] flex flex-col font-sans overflow-hidden">
+<div id="root" className="flex-1"></div>
+<audio id="correctSound" preload="auto" src="sounds/correct.mp3" onError="console.error('Failed to load correct sound')"></audio>
+<audio id="wrongSound" preload="auto" src="sounds/wrong.mp3" onError="console.error('Failed to load wrong sound')"></audio>
+<script type="text/babel">
+  // ... (Diğer kod aynı kalıyor, sadece wordLists.tr düzeltiliyor)
+  const wordLists = {
+    tr: [
+      'at', 'kuş', 'kedi', 'köpek', 'balık', 'tavşan', 'kaplan', 'aslan', 'fil', 'inek',
+      'koyun', 'keçi', 'tilki', 'kurt', 'ayı', 'yılan', 'karga', 'ceylan', 'nuh', 'küp',
+      'kalem', 'defter', 'masa', 'telefon', 'bilgisayar', 'televizyon', 'araba', 'tava',
+      'bardak', 'kupa', 'çanta', 'saat', 'anahtar', 'kase', 'cetvel', 'tornavida', 'şef',
+      'doktor', 'öğretmen', 'mühendis', 'avukat', 'polis', 'hemşire', 'terzi', 'berber',
+      'yazar', 'sanatçı', 'mimar', 'kasap', 'eczacı', 'iran', 'boza', 'kore', 'türkiye',
+      // ... (Diğer kelimeler)
+      'saklambaç', 'boğaziçi', 'kupa',
+      // ... (Diğer kelimeler)
+    ],
+    en: [
+      // ... (Değişiklik yok)
+    ]
+  };
+  // ... (Diğer kod aynı kalıyor)
+</script>
+</body>
+</html>
+
+  </style>
+</head>
+<body className="h-[100vh] flex flex-col font-sans overflow-hidden">
+<div id="root" className="flex-1"></div>
+<audio id="correctSound" preload="auto" src="sounds/correct.mp3" onError="console.error('Failed to load correct sound')"></audio>
+<audio id="wrongSound" preload="auto" src="sounds/wrong.mp3" onError="console.error('Failed to load wrong sound')"></audio>
+<script type="text/javascript">
+  var gk_isXlsx = false;
+  var gk_xlsxFileLookup = {};
+  var gk_fileData = {};
+  function filledCell(cell) {
+    return cell !== '' && cell != null;
+  }
+  function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+      try {
+        var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+        var firstSheetName = workbook.SheetNames[0];
+        var worksheet = workbook.Sheets[firstSheetName];
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+        var filteredData = jsonData.filter(row => row.some(filledCell));
+        var headerRowIndex = filteredData.findIndex((row, index) =>
+          row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+        );
+        if (headerRowIndex === -1 || headerRowIndex > 25) {
+          headerRowIndex = 0;
+        }
+        var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+        csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+        return csv;
+      } catch (e) {
+        console.error('loadFileData error:', e);
+        return "";
+      }
+    }
+    return gk_fileData[filename] || "";
+  }
+</script>
+<script type="text/babel">
+  window.onerror = function (msg, url, lineNo, columnNo, error) {
+    console.error(`Global error: ${msg}\nURL: ${url}\nLine: ${lineNo}\nColumn: ${columnNo}\nError:`, error);
+    return false;
+  };
+
+  console.log('React:', typeof React !== 'undefined' ? 'Loaded' : 'Failed');
+  console.log('ReactDOM:', typeof ReactDOM !== 'undefined' ? 'Loaded' : 'Failed');
+  console.log('Babel:', typeof Babel !== 'undefined' ? 'Loaded' : 'Failed');
+  console.log('Lodash:', typeof _ !== 'undefined' ? 'Loaded' : 'Failed');
+
+  if (typeof Babel !== 'undefined') {
+    Babel.registerPreset('react', {
+      presets: ['react']
+    });
+  } else {
+    console.error('Babel is not loaded, JSX transpilation will fail');
+  }
+
+  document.addEventListener('touchstart', function (e) {
+    if (window.scrollY === 0) {
+      e.preventDefault();
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function (e) {
+    if (window.scrollY === 0 && e.touches.length === 1) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { passive: true });
+
+  function customToUpperCase(str) {
+    try {
+      return str
+        .replace(/i/g, 'İ')
+        .replace(/ı/g, 'I')
+        .replace(/ğ/g, 'Ğ')
+        .replace(/ü/g, 'Ü')
+        .replace(/ş/g, 'Ş')
+        .replace(/ö/g, 'Ö')
+        .replace(/ç/g, 'Ç')
+        .toUpperCase();
+    } catch (err) {
+      console.error('customToUpperCase error:', err);
+      return str;
+    }
+  }
+
+  class ErrorBoundary extends React.Component {
+    state = { hasError: false, error: null };
+
+    static getDerivedStateFromError(error) {
+      return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+      console.error("ErrorBoundary caught:", error, errorInfo);
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return (
+          <div className="text-center p-4">
+            <h1 className="text-2xl text-red-600">Bir hata oluştu!</h1>
+            <p>{this.state.error?.toString() || 'Unknown error'}</p>
+            <button
+              className="bg-indigo-600 text-white px-4 py-2 mt-4 rounded-lg"
+              onClick={() => window.location.reload()}
+            >
+              Sayfayı Yenile
+            </button>
+          </div>
+        );
+      }
+      return this.props.children;
+    }
+  }
+
+  const translations = {
+    tr: {
+      title: "Kelime Avı",
+      rulesTitle: "Oyun Kuralları",
+      rules: [
+        "60 seviye, her 12 seviyede tahta büyür.",
+        "Kelimeler sağ, sol, yukarı veya aşağı yönlerde.",
+        "Harfleri sürükleyerek kelimeleri seç, doğruysa altta pasif olur.",
+        "Tüm kelimeleri bul, gizli sözcüğü tahmin et ve seviyeyi tamamla."
+      ],
+      startButton: "Kelime Avına Başla",
+      easyMode: "Kolay Mod",
+      hardMode: "Zor Mod",
+      level: "Seviye",
+      words: "Kelimeler",
+      hiddenWord: "Gizli Sözcük",
+      hiddenWordPlaceholder: "Gizli sözcüğü girin",
+      checkButton: "Kontrol Et",
+      homeButton: "Ana Sayfaya Dön",
+      footer: "2025 Ozcelik Inc. Her hakkı mahfuzdur.",
+      congrats: "Tebrikler!",
+      error: "Hata!",
+      successMessage: (word) => `Tebrikler! Gizli sözcüğü buldunuz: ${word}`,
+      allWordsRequired: "Önce tüm kelimeleri bulmalısınız!",
+      wrongGuess: "Yanlış! Tekrar deneyin.",
+      gameCompleted: "Tebrikler! Oyunu tamamladınız!",
+      continueButton: "Devam Et",
+      tryAgainButton: "Tekrar Dene",
+      language: "Dil",
+      turkish: "Türkçe",
+      english: "İngilizce"
+    },
+    en: {
+      title: "Word Hunt",
+      rulesTitle: "Game Rules",
+      rules: [
+        "60 levels, board grows every 12 levels.",
+        "Words are placed right, left, up, or down.",
+        "Swipe letters to select words; correct ones deactivate below.",
+        "Find all words, guess the hidden word, and complete the level."
+      ],
+      startButton: "Start Word Hunt",
+      easyMode: "Easy Mode",
+      hardMode: "Hard Mode",
+      level: "Level",
+      words: "Words",
+      hiddenWord: "Hidden Word",
+      hiddenWordPlaceholder: "Enter the hidden word",
+      checkButton: "Check",
+      homeButton: "Return to Home",
+      footer: "2025 Ozcelik Inc. All rights reserved.",
+      congrats: "Congratulations!",
+      error: "Error!",
+      successMessage: (word) => `Congratulations! You found the hidden word: ${word}`,
+      allWordsRequired: "You must find all words first!",
+      wrongGuess: "Incorrect! Try again.",
+      gameCompleted: "Congratulations! You completed the game!",
+      continueButton: "Continue",
+      tryAgainButton: "Try Again",
+      language: "Language",
+      turkish: "Turkish",
+      english: "English"
+    }
+  };
+
+  const charSets = {
+    tr: 'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ'.split(''),
+    en: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+  };
+const wordLists = {
+    tr: [
+      'at', 'kuş', 'kedi', 'köpek', 'balık', 'tavşan', 'kaplan', 'aslan', 'fil', 'inek',
+      'koyun', 'keçi', 'tilki', 'kurt', 'ayı', 'yılan', 'karga', 'ceylan', 'kap', 'küp',
+      'kalem', 'defter', 'masa', 'telefon', 'bilgisayar', 'televizyon', 'araba', 'tava',
+      'bardak', 'kupa', 'çanta', 'saat', 'anahtar', 'kase', 'cetvel', 'tornavida', 'şef',
+      'doktor', 'öğretmen', 'mühendis', 'avukat', 'polis', 'hemşire', 'terzi', 'berber',
+      'yazar', 'sanatçı', 'mimar', 'kasap', 'eczacı', 'iran', 'irak', 'kore', 'türkiye',
+      'almanya', 'fransa', 'italya', 'japonya', 'brezilya', 'kanada', 'rusya', 'yunan',
+      'ispanya', 'norveç', 'mısır', 'şili', 'peru', 'süt', 'bal', 'kek', 'kazı', 'tuz',
+      'ekmek', 'peynir', 'pizza', 'makarna', 'çorba', 'yumurta', 'yoğurt', 'zeytin', 'ot',
+      'çim', 'çam', 'gül', 'lale', 'kaktüs', 'çınar', 'meşe', 'bambu', 'orkide', 'ağaç',
+      'funda', 'kekik', 'boks', 'koşu', 'yoga', 'futbol', 'basketbol', 'voleybol', 'tenis',
+      'yüzme', 'atletizm', 'güreş', 'judo', 'karate', 'eskrim', 'okçuluk', 'hentbol',
+      'bisiklet', 'sörf', 'gri', 'bej', 'mor', 'kırmızı', 'mavi', 'yeşil', 'sarı', 'siyah',
+      'beyaz', 'pembe', 'lacivert', 'turkuaz', 'kahve', 'lila', 'bordo', 'raf', 'vazo',
+      'soba', 'ayna', 'lamba', 'halı', 'perde', 'çatal', 'kaşık', 'bıçak', 'tabak', 'koltuk',
+      'yatak', 'dolap', 'fırın', 'sehpa', 'süpürge', 'ut', 'ney', 'org', 'gitar', 'piyano',
+      'keman', 'davul', 'flüt', 'arp', 'kanun', 'kaval', 'saz', 'atkı', 'bere', 'kemer',
+      'ceket', 'gömlek', 'kazak', 'ayakkabı', 'şapka', 'eldiven', 'etek', 'mayo', 'yelek',
+      'hırka', 'tunik', 'fular', 'kravat', 'kar', 'sis', 'nem', 'yağmur', 'güneş', 'rüzgar',
+      'bulut', 'sıcak', 'soğuk', 'çiy', 'don', 'yıldırım', 'göz', 'kul', 'diş', 'kalp',
+      'beyin', 'mide', 'kemik', 'kas', 'burun', 'dil', 'deri', 'saç', 'tırnak', 'damar',
+      'sinir', 'tır', 'kano', 'taksi', 'motosiklet', 'tren', 'uçak', 'gemi', 'otobüs',
+      'kamyon', 'kayık', 'vapur', 'metro', 'tramvay', 'helikopter', 'nar', 'muz', 'elma',
+      'armut', 'kiraz', 'çilek', 'üzüm', 'kavun', 'karpuz', 'erik', 'incir', 'kayısı',
+      'vişne', 'portakal', 'ananas', 'saber', 'turp', 'roka', 'kabak', 'domates', 'biber', 'patates',
+      'soğan', 'havuç', 'marul', 'ıspanak', 'fasulye', 'bamya', 'bezelye', 'su', 'çay',
+      'soda', 'kahve', 'kola', 'ayran', 'şerbet', 'kefir', 'boza', 'ip', 'dart', 'okey',
+      'satranç', 'tavla', 'yapboz', 'kart', 'bilardo', 'dama', 'körebe', 'seksek',
+      'saklambaç', 'yakartop', 'chip', 'kablo', 'lens', 'yazıcı', 'monitör', 'klavye',
+      'fare', 'kamera', 'hoparlör', 'tablet', 'drone', 'ekran', 'modem', 'router', 'batarya',
+      'sensör', 'adaptör', 'dağ', 'göl', 'kum', 'deniz', 'orman', 'nehir', 'çöl', 'ova',
+      'şelale', 'taş', 'toprak', 'tepe', 'vadi', 'ada', 'mağara', 'bayır', 'koy', 'plato',
+      'ev', 'oda', 'rıfkı', 'leylak', 'liman', 'gol', 'yüz', 'alın', 'kaş',
+      'kirpik', 'dudak', 'çene', 'yanak', 'kulak', 'boyun', 'gözlük', 'çizme', 'terlik',
+      'bot', 'kaban', 'mont', 'şort', 'tişört', 'bluz', 'tayt', 'yem', 'tohum', 'kök',
+      'dal', 'yaprak', 'çiçek', 'meyve', 'kabuk', 'tomurcuk', 'bar', 'kafe', 'lokanta',
+      'pastane', 'büfe', 'dükkan', 'pazar', 'çarşı', 'mektup', 'not', 'liste', 'ajanda',
+      'takvim', 'harita', 'plan', 'çizim', 'resim', 'soru', 'cevap', 'test', 'sınav',
+      'ödev', 'proje', 'makale', 'rapor', 'sunum', 'aile', 'arkadaş', 'komşu', 'misafir',
+      'konuk', 'yolcu', 'turist', 'öğrenci', 'hız', 'yavaş', 'erken', 'geç', 'şimdi',
+      'sonra', 'önce', 'hemen', 'yarın', 'dün', 'tuğla', 'beton', 'cam', 'ahşap', 'metal',
+      'plastik', 'kumaş', 'pamuk', 'yün', 'kız', 'bebek', 'kitap', 'dergi', 'gazete',
+      'kağıt', 'silgi', 'kutu', 'torba', 'poşet', 'sokak', 'cadde', 'köy', 'kent', 'ilçe',
+      'bölge', 'ülke', 'kıta', 'yemek', 'salata', 'tatlı', 'börek', 'pilav', 'kebap',
+      'döner', 'sarma', 'sabah', 'akşam', 'öğle', 'el', 'ayak', 'baş', 'kol', 'bacak',
+      'omuz', 'bel', 'sırt', 'göğüs', 'park', 'bahçe', 'meydan', 'avlu', 'saha', 'yol',
+      'köprü', 'tünel', 'liman', 'okul', 'hastane', 'müze', 'tiyatro', 'sinema', 'cami',
+      'iş', 'ofis', 'market', 'fırın', 'banka', 'otel', 'serçe', 'kartal', 'şahin',
+      'baykuş', 'güvercin', 'kaz', 'ördek', 'tavuk', 'selam', 'lütfen', 'pardon', 'bir',
+      'iki', 'üç', 'dört', 'beş', 'altı', 'yedi', 'sekiz', 'dokuz', 'on',
+      'üçgen', 'alo', 'hoşça', 'güle', 'tuz', 'şeker', 'pencere', 'kapı', 'duvar', 'tavan',
+      'zemin', 'çatı', 'balkon', 'teras', 'koridor', 'merdiven', 'dans', 'bale', 'puzzle',
+      'hayalperest', 'dakika', 'sindirim', 'sandalet', 'sap', 'dalga', 'kıyı', 'liman', 'buz', 'duman',
+      'sandal', 'kristal', 'limon', 'ahbap', 'salon', 'kiler', 'banyo', 'mutfak', 'hol',
+      'yorgan', 'battaniye', 'çarşaf', 'yastık', 'divan', 'puf', 'şezlong', 'kanepe',
+      'vitrin', 'komodin', 'gardırop', 'şifonyer', 'askı', 'rafta', 'kutu', 'sepet',
+      'saksı', 'çiçeklik', 'vazo', 'biblo', 'heykel', 'tablo', 'çerçeve', 'poster',
+      'panjur', 'stor', 'jaluzi', 'tül', 'fonluk', 'korniş', 'duş', 'küvet', 'lavabo',
+      'musluk', 'aynalı', 'dolap', 'havlu', 'sabunluk', 'fırça', 'tarak', 'makas',
+      'cımbız', 'törpü', 'ojelik', 'ruj', 'far', 'maskara', 'allık', 'fondöten',
+      'parfüm', 'deodorant', 'şampuan', 'krem', 'losyon', 'dişmacun', 'eklem', 'sirke',
+      'hadi', 'fişek', 'hoş', 'görüşürüz', 'tamam', 'olur', 'ender', 'sağol', 'eyvallah',
+      'bilek', 'kumpir', 'simit', 'poğaça', 'açma', 'lahmacun', 'pide', 'mantı', 'dolma',
+      'sarma', 'kısır', 'mercimek', 'nohut', 'fasulye', 'barbunya', 'patlıcan', 'kabak',
+      'ıspanak', 'pırasa', 'lahana', 'karnabahar', 'brokoli', 'mantar', 'enginar',
+      'kereviz', 'taze', 'kuru', 'zencefil', 'zerdeçal', 'tarçın', 'kimyon', 'karabiber',
+      'nane', 'maydanoz', 'dereotu', 'roka', 'fesleğen', 'adaçayı', 'biberiye', 'kekik',
+      'sumak', 'susam', 'çörekotu', 'haşhaş', 'anason', 'kaju', 'badem', 'ceviz',
+      'fıstık', 'kestane', 'findık', 'hurma', 'kuruüzüm', 'kayısı', 'incir', 'erik',
+      'şeftali', 'nektarin', 'mandalina', 'greyfurt', 'limon', 'kivi', 'avokado',
+      'köz', 'yaban', 'böğürtlen', 'ahududu', 'frenk', 'üzüm', 'dut', 'kızılcık',
+      'karpuz', 'kavun', 'çilek', 'kiraz', 'vişne'
+    ],
+    en: [
+      'cat', 'dog', 'bird', 'dish', 'rabbit', 'tiger', 'lion', 'elephant', 'cow', 'sheep',
+      'goat', 'fox', 'wolf', 'bear', 'snake', 'crow', 'deer', 'cup', 'box', 'pen',
+      'notebook', 'table', 'stone', 'computer', 'television', 'car', 'pan', 'glass',
+      'bug', 'tag', 'match', 'key', 'bowl', 'ruler', 'screwdriver', 'chef', 'doctor',
+      'teacher', 'engineer', 'lawyer', 'police', 'nurse', 'tailor', 'barber', 'writer',
+      'artist', 'architect', 'butcher', 'pharmacist', 'iran', 'iraq', 'korea', 'turkey',
+      'germany', 'france', 'italy', 'japan', 'brazil', 'canada', 'russia', 'greece',
+      'spain', 'norway', 'egypt', 'chile', 'peru', 'milk', 'honey', 'cake', 'table',
+      'banana', 'bread', 'cheese', 'pizza', 'pasta', 'soup', 'egg', 'yogurt', 'olive',
+      'grass', 'pine', 'rose', 'tulip', 'cactus', 'oak', 'maple', 'bamboo', 'orchid',
+      'tree', 'heather', 'SEMBLY', 'thyme', 'boxing', 'running', 'yoga', 'football', 'basketball',
+      'volleyball', 'tennis', 'swimming', 'athletics', 'wrestling', 'judo', 'karate',
+      'fencing', 'archery', 'handball', 'cycling', 'surfing', 'gray', 'beige', 'purple',
+      'red', 'blue', 'green', 'yellow', 'black', 'white', 'pink', 'navy', 'turquoise',
+      'brown', 'lilac', 'maroon', 'shelf', 'vase', 'stove', 'mirror', 'lamp', 'carpet',
+      'curtain', 'fork', 'spoon', 'knife', 'plate', 'sofa', 'bed', 'cabinet', 'oven',
+      'coffee', 'table', 'broom', 'lute', 'flute', 'organ', 'guitar', 'piano', 'violin',
+      'drum', 'harp', 'lyre', 'mandolin', 'pipe', 'scarf', 'hat', 'belt', 'jacket',
+      'shirt', 'sweater', 'shoe', 'cap', 'glove', 'skirt', 'swimsuit', 'vest', 'cardigan',
+      'tunic', 'shawl', 'tie', 'snow', 'fog', 'rain', 'sun', 'wind', 'cloud', 'hot',
+      'cold', 'dew', 'frost', 'lightning', 'eye', 'ear', 'tooth', 'heart', 'brain',
+      'stomach', 'bone', 'muscle', 'nose', 'tongue', 'skin', 'hair', 'nail', 'vein',
+      'nerve', 'truck', 'canoe', 'taxi', 'motorcycle', 'train', 'plane', 'ship', 'bus',
+      'van', 'boat', 'ferry', 'subway', 'tram', 'helicopter', 'pear', 'cherry', 'grape',
+      'melon', 'watermelon', 'plum', 'fig', 'apricot', 'berry', 'orange', 'pineapple',
+      'radish', 'arugula', 'zucchini', 'tomato', 'pepper', 'potato', 'onion', 'carrot',
+      'lettuce', 'spinach', 'bean', 'okra', 'pea', 'later', 'tea', 'soda', 'coffee',
+      'cola', 'juice', 'syrup', 'kefir', 'mead', 'rope', 'dart', 'chess', 'backgammon',
+      'puzzle', 'card', 'billiard', 'checkers', 'hide', 'hopscotch', 'tag', 'ball',
+      'chip', 'cable', 'lens', 'printer', 'monitor', 'keyboard', 'mouse', 'camera',
+      'speaker', 'tablet', 'drone', 'screen', 'modem', 'router', 'battery', 'sensor',
+      'adapter', 'mountain', 'lake', 'sand', 'sea', 'forest', 'river', 'desert', 'plain',
+      'waterfall', 'stone', 'soil', 'hill', 'valley', 'island', 'cave', 'slope', 'bay',
+      'plateau', 'house', 'room', 'living', 'kitchen', 'bathroom', 'hall', 'pantry',
+      'face', 'forehead', 'eyebrow', 'eyelash', 'lip', 'chin', 'cheek', 'ear', 'neck',
+      'glasses', 'boot', 'slipper', 'coat', 'jacket', 'shorts', 'tshirt', 'blouse',
+      'leggings', 'feed', 'seed', 'root', 'branch', 'leaf', 'flower', 'fruit', 'bark',
+      'bud', 'bar', 'cafe', 'restaurant', 'bakery', 'buffet', 'shop', 'market', 'bazaar',
+      'letter', 'note', 'list', 'agenda', 'calendar', 'map', 'plan', 'drawing', 'picture',
+      'question', 'answer', 'test', 'exam', 'homework', 'project', 'article', 'report',
+      'presentation', 'family', 'friend', 'neighbor', 'guest', 'visitor', 'passenger',
+      'tourist', 'student', 'speed', 'slow', 'early', 'late', 'now', 'later', 'before',
+      'soon', 'tomorrow', 'yesterday', 'brick', 'concrete', 'glass', 'wood', 'metal',
+      'plastic', 'fabric', 'cotton', 'wool', 'girl', 'baby', 'book', 'magazine',
+      'newspaper', 'paper', 'eraser', 'box', 'bag', 'pouch', 'street', 'avenue', 'village',
+      'city', 'district', 'region', 'country', 'continent', 'food', 'salad', 'dessert',
+      'pastry', 'rice', 'kebab', 'wrap', 'morning', 'evening', 'noon', 'hand', 'foot',
+      'head', 'arm', 'leg', 'shoulder', 'waist', 'back', 'chest', 'park', 'garden',
+      'square', 'courtyard', 'field', 'road', 'bridge', 'tunnel', 'port', 'school',
+      'hospital', 'museum', 'theater', 'cinema', 'mosque', 'work', 'office', 'store',
+      'bakery', 'bank', 'hotel', 'sparrow', 'eagle', 'hawk', 'owl', 'pigeon', 'goose',
+      'duck', 'chicken', 'hello', 'please', 'sorry', 'one', 'two', 'three', 'four',
+      'five', 'six', 'seven', 'eight', 'nine', 'ten', 'hey', 'call', 'bye', 'thanks',
+      'salt', 'sugar', 'window', 'door', 'wall', 'ceiling', 'floor', 'roof', 'balcony',
+      'terrace', 'corridor', 'stairs', 'dance', 'ballet', 'puzzle', 'domino', 'scrabble',
+      'sandal', 'stem', 'wave', 'shore', 'port', 'ice', 'smoke', 'boat', 'crystal',
+      'lemon', 'hey', 'living', 'pantry', 'bathroom', 'kitchen', 'hall', 'blanket',
+      'sheet', 'pillow', 'couch', 'pouf', 'chaise', 'sofa', 'display', 'nightstand',
+      'wardrobe', 'dresser', 'hanger', 'shelf', 'basket', 'pot', 'vase', 'statue',
+      'painting', 'frame', 'poster', 'shutter', 'blind', 'curtain', 'tulle', 'drape',
+      'cornice', 'shower', 'bathtub', 'sink', 'faucet', 'mirror', 'cabinet', 'towel',
+      'soap', 'brush', 'comb', 'scissors', 'tweezers', 'file', 'polish', 'lipstick',
+      'shadow', 'mascara', 'blush', 'foundation', 'perfume', 'deodorant', 'shampoo',
+      'cream', 'lotion', 'toothpaste', 'hey', 'hello', 'go', 'hey', 'call', 'see', 'okay',
+      'sure', 'hey', 'thanks', 'cool', 'hey', 'potato', 'bagel', 'bun', 'pizza', 'pie',
+      'dumpling', 'wrap', 'salad', 'lentil', 'chickpea', 'bean', 'eggplant', 'zucchini',
+      'spinach', 'leek', 'cabbage', 'cauliflower', 'broccoli', 'mushroom', 'artichoke',
+      'celery', 'fresh', 'dry', 'ginger', 'turmeric', 'cinnamon', 'cumin', 'pepper',
+      'mint', 'parsley', 'dill', 'arugula', 'basil', 'sage', 'rosemary', 'thyme',
+      'sumac', 'sesame', 'nigella', 'poppy', 'anise', 'cashew', 'almond', 'walnut',
+      'peanut', 'chestnut', 'hazelnut', 'date', 'raisin', 'apricot', 'fig', 'plum',
+      'peach', 'nectarine', 'tangerine', 'grapefruit', 'lemon', 'kiwi', 'avocado',
+      'pomegranate', 'berry', 'raspberry', 'blackberry', 'grape', 'mulberry', 'cranberry',
+      'watermelon', 'melon', 'strawberry', 'cherry', 'sour'
+    ]
+  };
+
+  const hiddenWordLists = {
+    tr: {
+      5: ['elmas', 'sabun', 'dolap', 'kalem', 'defter', 'bardak', 'zeytin', 'koltuk', 'lamba', 'robot', 'kitap', 'bilye'],
+      6: ['armut', 'biber', 'kobra', 'makarna', 'pizza', 'telefon', 'kutu', 'sokak', 'yemek', 'salata', 'kupon', 'pilav'],
+      7: ['portakal', 'yumurta', 'bisiklet', 'futbol', 'tenis', 'yüzme', 'simya', 'orak', 'proje', 'makale', 'rapor', 'sunum'],
+      8: ['bilgisayar', 'karargah', 'doktor', 'erzincan', 'avukat', 'sandal', 'mektup', 'takvim', 'harita', 'resim', 'kumanda', 'misafir'],
+      9: ['motosiklet', 'helikopter', 'tren', 'teflon', 'taksi', 'vapur', 'metro', 'turist', 'granit', 'konuk', 'yolcu', 'pencere']
+    },
+    en: {
+      5: ['diamond', 'soap', 'sugar', 'pencil', 'notebook', 'glass', 'olive', 'sofa', 'lamp', 'paper', 'book', 'eraser'],
+      6: ['pear', 'pepper', 'soup', 'pasta', 'pizza', 'phone', 'box', 'street', 'food', 'salad', 'pastry', 'rice'],
+      7: ['orange', 'egg', 'bicycle', 'soccer', 'tennis', 'swimming', 'exam', 'homework', 'project', 'article', 'report', 'speech'],
+      8: ['computer', 'engineer', 'doctor', 'teacher', 'lawyer', 'nurse', 'letter', 'calendar', 'map', 'picture', 'friend', 'guest'],
+      9: ['motorcycle', 'helicopter', 'train', 'bus', 'taxi', 'ferry', 'subway', 'tourist', 'student', 'visitor', 'passenger', 'window']
+    }
+  };
+
+
+
+  const boardSizes = [];
+  for (let level = 0; level < 60; level++) {
+    if (level < 12) {
+      boardSizes.push({ rows: 7, cols: 9, hiddenWordLength: 5 });
+    } else if (level < 24) {
+      boardSizes.push({ rows: 8, cols: 9, hiddenWordLength: 6 });
+    } else if (level < 36) {
+      boardSizes.push({ rows: 9, cols: 9, hiddenWordLength: 7 });
+    } else if (level < 48) {
+      boardSizes.push({ rows: 10, cols: 9, hiddenWordLength: 8 });
+    } else {
+      boardSizes.push({ rows: 11, cols: 9, hiddenWordLength: 9 });
+    }
+  }
+
+  const directions = [
+    { name: 'right', dx: 0, dy: 1 },
+    { name: 'left', dx: 0, dy: -1 },
+    { name: 'down', dx: 1, dy: 0 },
+    { name: 'up', dx: -1, dy: 0 }
+  ];
+
+  function placeWords(board, words, rows, cols, usedCells) {
+    try {
+      console.log("placeWords called, word count:", words.length);
+      const placedWords = [];
+      const directionCounts = { right: 0, left: 0, down: 0, up: 0 };
+      const maxPerDirection = Math.ceil(words.length / 4);
+
+      for (const word of words) {
+        if (!word || typeof word !== 'string') {
+          console.warn("Invalid word:", word);
+          continue;
+        }
+        let placed = false;
+        let attempts = 0;
+        const maxAttempts = 6000;
+
+        while (!placed && attempts < maxAttempts) {
+          const direction = directions[Math.floor(Math.random() * directions.length)];
+          const row = Math.floor(Math.random() * rows);
+          const col = Math.floor(Math.random() * cols);
+
+          if (directionCounts[direction.name] >= maxPerDirection) {
+            attempts++;
+            continue;
+          }
+
+          let canPlace = true;
+          const positions = [];
+          for (let i = 0; i < word.length; i++) {
+            const r = row + i * direction.dx;
+            const c = col + i * direction.dy;
+            const cellKey = `${r},${c}`;
+            if (
+              r < 0 || r >= rows || c < 0 || c >= cols ||
+              (board[r][c] !== '' && board[r][c] !== word[i]) ||
+              usedCells.has(cellKey)
+            ) {
+              canPlace = false;
+              break;
+            }
+            positions.push({ row: r, col: c });
+          }
+
+          if (canPlace) {
+            for (let i = 0; i < word.length; i++) {
+              const { row: r, col: c } = positions[i];
+              board[r][c] = word[i];
+              usedCells.add(`${r},${c}`);
+            }
+            placedWords.push({ word, positions, direction: direction.name });
+            directionCounts[direction.name]++;
+            placed = true;
+          }
+          attempts++;
+        }
+        if (!placed) {
+          console.warn(`Could not place word: ${word}`);
+        }
+      }
+      console.log("Placed words:", placedWords.length);
+      return placedWords;
+    } catch (e) {
+      console.error("placeWords error:", e);
+      return [];
+    }
+  }
+
+  function placeHiddenWord(board, hiddenWord, rows, cols, usedCells, hiddenWordCells) {
+    try {
+      console.log("placeHiddenWord called, hidden word:", hiddenWord);
+      const hiddenWordLetters = hiddenWord.split('');
+      const emptyCells = [];
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          const cellKey = `${i},${j}`;
+          if (!usedCells.has(cellKey)) {
+            emptyCells.push({ row: i, col: j });
+          }
+        }
+      }
+
+      console.log(`Empty cells: ${emptyCells.length}, Hidden word length: ${hiddenWordLetters.length}`);
+      if (emptyCells.length < hiddenWordLetters.length) {
+        console.warn("Not enough empty cells");
+        return false;
+      }
+
+      for (let i = 0; i < hiddenWordLetters.length; i++) {
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        const { row, col } = emptyCells.splice(randomIndex, 1)[0];
+        board[row][col] = hiddenWordLetters[i];
+        usedCells.add(`${row},${col}`);
+        hiddenWordCells.add(`${row},${col}`);
+      }
+
+      return true;
+    } catch (e) {
+      console.error("placeHiddenWord error:", e);
+      return false;
+    }
+  }
+
+  function createBoard(level, language) {
+    try {
+      console.log(`createBoard called: Level ${level + 1}, Language: ${language}`);
+      const { rows, cols, hiddenWordLength } = boardSizes[level] || {};
+      if (!rows || !cols) {
+        console.error("Invalid boardSizes level:", level);
+        return { board: [], words: [], hiddenWord: '', extraLetters: [] };
+      }
+      const totalCells = rows * cols;
+      let boardAttempts = 0;
+      const maxBoardAttempts = 200;
+
+      while (boardAttempts < maxBoardAttempts) {
+        const board = Array(rows).fill().map(() => Array(cols).fill(''));
+        const usedCells = new Set();
+        const hiddenWordCells = new Set();
+        const extraLetters = [];
+
+        let currentHiddenWordLength = hiddenWordLength;
+        const suitableHiddenWords = hiddenWordLists[language][currentHiddenWordLength] || [];
+        if (!suitableHiddenWords.length) {
+          console.warn(`No suitable hidden words: ${currentHiddenWordLength}`);
+          currentHiddenWordLength++;
+          if (currentHiddenWordLength > 9) {
+            console.warn("Max hidden word length exceeded");
+            boardAttempts++;
+            continue;
+          }
+          continue;
+        }
+        const hiddenWord = customToUpperCase(suitableHiddenWords[Math.floor(Math.random() * suitableHiddenWords.length)]);
+        console.log(`Hidden word: ${hiddenWord}, Length: ${hiddenWord.length}`);
+
+        const targetLetterCount = totalCells - hiddenWord.length;
+        const selectedWords = [];
+        let currentLetterCount = 0;
+        const usedWords = new Set();
+        const filteredWords = wordLists[language]
+          .filter(word => word && word.length >= 2 && word.length <= Math.max(rows, cols))
+          .sort((a, b) => a.length - b.length);
+
+        console.log(`Target letter count: ${targetLetterCount}, Board cells: ${totalCells}`);
+        while (currentLetterCount < targetLetterCount && usedWords.size < filteredWords.length) {
+          const word = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+          if (word && !usedWords.has(word)) {
+            if (currentLetterCount + word.length <= targetLetterCount) {
+              selectedWords.push(customToUpperCase(word));
+              usedWords.add(word);
+              currentLetterCount += word.length;
+            } else {
+              const neededLength = targetLetterCount - currentLetterCount;
+              const finalWord = filteredWords.find(w => !usedWords.has(w) && w.length === neededLength);
+              if (finalWord) {
+                selectedWords.push(customToUpperCase(finalWord));
+                usedWords.add(finalWord);
+                currentLetterCount += finalWord.length;
+              } else {
+                const closeWord = filteredWords.find(w => !usedWords.has(w) && Math.abs((currentLetterCount + w.length) - targetLetterCount) <= 5);
+                if (closeWord) {
+                  selectedWords.push(customToUpperCase(closeWord));
+                  usedWords.add(closeWord);
+                  currentLetterCount += closeWord.length;
+                }
+              }
+              break;
+            }
+          }
+        }
+
+        console.log(`Selected word count: ${selectedWords.length}, Total letters: ${currentLetterCount}`);
+        if (Math.abs(currentLetterCount - targetLetterCount) > 5) {
+          console.warn(`Could not match letter count: ${currentLetterCount}/${targetLetterCount}`);
+          boardAttempts++;
+          continue;
+        }
+
+        const placedWords = placeWords(board, selectedWords, rows, cols, usedCells);
+        console.log(`Placed word count: ${placedWords.length}/${selectedWords.length}`);
+        if (placedWords.length < selectedWords.length * 0.7) {
+          console.warn(`Too few words placed`);
+          boardAttempts++;
+          continue;
+        }
+
+        const success = placeHiddenWord(board, hiddenWord, rows, cols, usedCells, hiddenWordCells);
+        if (!success) {
+          console.warn("Could not place hidden word");
+          boardAttempts++;
+          continue;
+        }
+
+        let emptyCells = 0;
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            if (!board[i][j] && extraLetters.length < 5) {
+              const letter = charSets[language][Math.floor(Math.random() * charSets[language].length)];
+              board[i][j] = letter;
+              extraLetters.push({ row: i, col: j, letter });
+              emptyCells++;
+            }
+          }
+        }
+        console.log(`Filled empty cells: ${emptyCells}, Extra letters: ${extraLetters.length}`);
+
+        const totalLetters = placedWords.reduce((sum, w) => sum + w.word.length, 0) + hiddenWord.length + extraLetters.length;
+        if (totalLetters !== totalCells) {
+          console.warn(`Formula error: ${totalLetters} !== ${totalCells}`);
+          boardAttempts++;
+          continue;
+        }
+
+        console.log(`Board created: Level ${level + 1}, Word count: ${placedWords.length}, Hidden word: ${hiddenWord}, Extra letters: ${extraLetters.length}, Total letters: ${totalLetters}`);
+        return { board, words: placedWords, hiddenWord, extraLetters };
+      }
+
+      console.error("Could not create board, max attempts reached");
+      return { board: [], words: [], hiddenWord: '', extraLetters: [] };
+    } catch (e) {
+      console.error("createBoard error:", e);
+      return { board: [], words: [], hiddenWord: '', extraLetters: [] };
+    }
+  }
+
+  function Modal({ isOpen, message, isSuccess, onClose, language }) {
+    try {
+      const t = translations[language];
+      if (!isOpen) return null;
+      return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg max-w-[90%] w-full text-center">
+            <h3 className={`text-lg font-semibold mb-2 ${isSuccess ? 'text-green-600' : 'text-red-600'}`}>
+              {isSuccess ? t.congrats : t.error}
+            </h3>
+            <p className="text-sm mb-4">{message}</p>
+            <button
+              onClick={onClose}
+              className={`px-3 py-1 rounded-lg text-white text-sm ${isSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+            >
+              {isSuccess ? t.continueButton : t.tryAgainButton}
+            </button>
+          </div>
+        </div>
+      );
+    } catch (err) {
+      console.error('Modal render error:', err);
+      return null;
+    }
+  }
+
+  function HomePage({ startGame, language, setLanguage }) {
+    try {
+      const t = translations[language];
+      return (
+        <div className="container mx-0 px-0 text-center max-h-[80vh] flex flex-col justify-center">
+          <img
+            src="logo.png"
+            alt="Kelime Avı Logo"
+            className="mx-auto mb-4 w-full max-w-full h-auto object-contain"
+            onError={() => console.error('Logo yüklenemedi')}
+          />
+          <div className="bg-gradient-to-b from-blue-100 to-indigo-100 p-6 rounded-2xl shadow-xl max-w-[95%] mx-auto">
+            <h2 className="text-2xl font-bold text-indigo-600 mb-4">{t.rulesTitle}</h2>
+            <ul className="text-left list-disc pl-6 mb-6 text-base text-gray-800">
+              {t.rules.map((rule, index) => (
+                <li key={index} className="mb-2">{rule}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex justify-center gap-2 mb-4 mt-4">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="bg-indigo-600 text-white p-2 rounded-lg text-sm focus:outline-none hover:bg-indigo-700 transition duration-300"
+            >
+              <option value="tr">{t.turkish}</option>
+              <option value="en">{t.english}</option>
+            </select>
+            <button
+              onClick={() => startGame('easyMode')}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition duration-300"
+            >
+              {t.easyMode}
+            </button>
+            <button
+              onClick={() => startGame('hardMode')}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition duration-300"
+            >
+              {t.hardMode}
+            </button>
+          </div>
+          <div className="w-full flex justify-center items-center text-center py-1 text-gray-600 mt-2">
+            <div className="text-xs">{t.footer}</div>
+          </div>
+        </div>
+      );
+    } catch (err) {
+      console.error('HomePage render error:', err);
+      return null;
+    }
+  }
+
+  function WordHunt({ goToHome, language, mode }) {
+    try {
+      const t = translations[language];
+      const [level, setLevel] = React.useState(0);
+      const [gameState, setGameState] = React.useState(() => createBoard(0, language));
+      const [selectedCells, setSelectedCells] = React.useState([]);
+      const [foundWords, setFoundWords] = React.useState([]);
+      const [hiddenWordGuess, setHiddenWordGuess] = React.useState('');
+      const [modal, setModal] = React.useState({ isOpen: false, message: '', isSuccess: false });
+      const [isSwiping, setIsSwiping] = React.useState(false);
+      const [swipeDirection, setSwipeDirection] = React.useState(null);
+
+      React.useEffect(() => {
+        try {
+          console.log("Level changed, creating new board:", level);
+          setGameState(createBoard(level, language));
+          setSelectedCells([]);
+          setFoundWords([]);
+          setHiddenWordGuess('');
+        } catch (e) {
+          console.error("useEffect (level change) error:", e);
+        }
+      }, [language, level]);
+
+      React.useEffect(() => {
+        console.log("Found words updated:", foundWords);
+      }, [foundWords]);
+
+      const getCellFromTouch = (touch) => {
+        try {
+          const grid = document.querySelector('.grid');
+          if (!grid) {
+            console.warn("Grid element not found");
+            return null;
+          }
+          const rect = grid.getBoundingClientRect();
+          const cellWidth = rect.width / (boardSizes[level]?.cols || 9);
+          const cellHeight = rect.height / (boardSizes[level]?.rows || 7);
+          const col = Math.floor((touch.clientX - rect.left) / cellWidth);
+          const row = Math.floor((touch.clientY - rect.top) / cellHeight);
+          if (
+            row >= 0 &&
+            row < (boardSizes[level]?.rows || 7) &&
+            col >= 0 &&
+            col < (boardSizes[level]?.cols || 9) &&
+            gameState.board[row]?.[col]
+          ) {
+            return { row, col };
+          }
+          return null;
+        } catch (e) {
+          console.error("getCellFromTouch error:", e);
+          return null;
+        }
+      };
+
+      const isValidSwipe = (from, to) => {
+        try {
+          if (!from || !to) return false;
+          const dr = to.row - from.row;
+          const dc = to.col - from.col;
+          const isAdjacent = (dr === 0 && Math.abs(dc) === 1) || (dc === 0 && Math.abs(dr) === 1);
+          if (!isAdjacent) return false;
+
+          if (!swipeDirection && selectedCells.length > 1) {
+            const firstCell = selectedCells[0];
+            const secondCell = selectedCells[1];
+            const initialDr = secondCell.row - firstCell.row;
+            const initialDc = secondCell.col - firstCell.col;
+            setSwipeDirection(initialDr === 0 ? 'horizontal' : 'vertical');
+          }
+
+          if (swipeDirection) {
+            return swipeDirection === 'horizontal' ? dr === 0 : dc === 0;
+          }
+          return true;
+        } catch (e) {
+          console.error("isValidSwipe error:", e);
+          return false;
+        }
+      };
+
+      const handleTouchStart = (e) => {
+        try {
+          console.log("handleTouchStart called");
+          e.preventDefault();
+          const touch = e.touches[0];
+          const cell = getCellFromTouch(touch);
+          if (cell && !isCellFound(cell.row, cell.col)) {
+            setIsSwiping(true);
+            setSelectedCells([cell]);
+            setSwipeDirection(null);
+          }
+        } catch (e) {
+          console.error("handleTouchStart error:", e);
+        }
+      };
+
+      const handleGridTouchMove = React.useCallback(
+        _.throttle((e) => {
+          try {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!isSwiping) return;
+            const touch = e.touches[0];
+            const cell = getCellFromTouch(touch);
+            if (!cell || isCellFound(cell.row, cell.col)) return;
+
+            const lastCell = selectedCells[selectedCells.length - 1];
+            if (cell.row === lastCell.row && cell.col === lastCell.col) return;
+
+            if (isValidSwipe(lastCell, cell)) {
+              const newSelectedCells = [...selectedCells];
+              if (!newSelectedCells.some(c => c.row === cell.row && c.col === cell.col)) {
+                newSelectedCells.push(cell);
+                setSelectedCells(newSelectedCells);
+
+                const word = newSelectedCells.map(c => gameState.board[c.row]?.[c.col] || '').join('');
+                const isPotentialWord = gameState.words.some(w => w.word.startsWith(word) && !foundWords.includes(w.word));
+                if (!isPotentialWord && newSelectedCells.length > 1) {
+                  setSelectedCells([]);
+                  setIsSwiping(false);
+                  setSwipeDirection(null);
+                  playWrongSound();
+                }
+              }
+            }
+          } catch (e) {
+            console.error("handleGridTouchMove error:", e);
+          }
+        }, 50),
+        [isSwiping, selectedCells, swipeDirection, gameState.words, foundWords, setSelectedCells, setIsSwiping, setSwipeDirection, playWrongSound, getCellFromTouch, isValidSwipe, isCellFound]
+      );
+
+      const playCorrectSound = () => {
+        try {
+          const correctSound = document.getElementById('correctSound');
+          if (correctSound) {
+            console.log("Playing correct sound");
+            correctSound.currentTime = 0;
+            correctSound.play().catch(e => console.error("Correct sound playback error:", e));
+          } else {
+            console.warn("Correct sound element not found");
+          }
+        } catch (e) {
+          console.error("playCorrectSound error:", e);
+        }
+      };
+
+      const playWrongSound = () => {
+        try {
+          const wrongSound = document.getElementById('wrongSound');
+          if (wrongSound) {
+            console.log("Playing wrong sound");
+            wrongSound.currentTime = 0;
+            wrongSound.play().catch(e => console.error("Wrong sound playback error:", e));
+          } else {
+            console.warn("Wrong sound element not found");
+          }
+        } catch (e) {
+          console.error("playWrongSound error:", e);
+        }
+      };
+
+      const handleTouchEnd = () => {
+        try {
+          console.log("handleTouchEnd called, swiping:", isSwiping);
+          if (!isSwiping) return;
+
+          const word = selectedCells.map(cell => gameState.board[cell.row]?.[cell.col] || '').join('');
+          console.log("Selected word:", word);
+          const isValidWord = gameState.words.some(w => w.word === word && !foundWords.includes(w.word));
+
+          if (isValidWord) {
+            setFoundWords(prev => {
+              const newFoundWords = [...prev, word];
+              console.log("Word added:", word, "New total:", newFoundWords.length);
+              playCorrectSound();
+              return newFoundWords;
+            });
+          }
+
+          setSelectedCells([]);
+          setIsSwiping(false);
+          setSwipeDirection(null);
+        } catch (e) {
+          console.error("handleTouchEnd error:", e);
+        }
+      };
+
+      const handleNextLevel = () => {
+        try {
+          console.log("handleNextLevel called, current level:", level);
+          if (level < 59) {
+            setLevel(level + 1);
+            setGameState(createBoard(level + 1, language));
+            setSelectedCells([]);
+            setFoundWords([]);
+            setHiddenWordGuess('');
+          } else {
+            setModal({
+              isOpen: true,
+              message: t.gameCompleted,
+              isSuccess: true
+            });
+          }
+        } catch (e) {
+          console.error("handleNextLevel error:", e);
+        }
+      };
+
+      const handleHiddenWordSubmit = () => {
+        try {
+          console.log("handleHiddenWordSubmit called, guess:", hiddenWordGuess);
+          if (foundWords.length === gameState.words.length && customToUpperCase(hiddenWordGuess) === gameState.hiddenWord) {
+            setModal({
+              isOpen: true,
+              message: t.successMessage(gameState.hiddenWord),
+              isSuccess: true
+            });
+          } else if (foundWords.length < gameState.words.length) {
+            setModal({
+              isOpen: true,
+              message: t.allWordsRequired,
+              isSuccess: false
+            });
+          } else {
+            setModal({
+              isOpen: true,
+              message: t.wrongGuess,
+              isSuccess: false
+            });
+          }
+        } catch (e) {
+          console.error("handleHiddenWordSubmit error:", e);
+        }
+      };
+
+      const closeModal = () => {
+        try {
+          console.log("closeModal called");
+          setModal({ isOpen: false, message: '', isSuccess: false });
+          if (modal.isSuccess && foundWords.length === gameState.words.length) {
+            if (level >= 59) {
+              goToHome();
+            } else {
+              handleNextLevel();
+            }
+          }
+        } catch (e) {
+          console.error("closeModal error:", e);
+        }
+      };
+
+      const isCellSelected = (row, col) => {
+        try {
+          return selectedCells.some(cell => cell.row === row && cell.col === col);
+        } catch (e) {
+          console.error("isCellSelected error:", e);
+          return false;
+        }
+      };
+
+      const isCellFound = (row, col) => {
+        try {
+          return gameState.words.some(w => foundWords.includes(w.word) && w.positions.some(p => p.row === row && p.col === col));
+        } catch (e) {
+          console.error("isCellFound error:", e);
+          return false;
+        }
+      };
+
+      const isHiddenWordLetter = (row, col) => {
+        try {
+          return gameState.words.every(wordInfo => !wordInfo.positions.some(pos => pos.row === row && pos.col === col)) && gameState.board[row]?.[col] && !isExtraLetter(row, col);
+        } catch (e) {
+          console.error("isHiddenWordLetter error:", e);
+          return false;
+        }
+      };
+
+      const isExtraLetter = (row, col) => {
+        try {
+          return gameState.extraLetters.some(extra => extra.row === row && extra.col === col);
+        } catch (e) {
+          console.error("isExtraLetter error:", e);
+          return false;
+        }
+      };
+
+      const theme = mode === 'hardMode' ? {
+        bg: 'bg-red-100',
+        foundCell: 'bg-red-300',
+        hiddenWordCell: 'bg-pink-200',
+        wordBg: 'bg-red-200',
+        gridBg: 'bg-red-50'
+      } : {
+        bg: 'bg-green-100',
+        foundCell: 'bg-green-300',
+        hiddenWordCell: 'bg-blue-200',
+        wordBg: 'bg-indigo-200',
+        gridBg: 'bg-indigo-50'
+      };
+
+      return (
+        <div className={`container mx-0 px-0 text-center max-h-[80vh] flex flex-col justify-between ${theme.bg}`}>
+          <div>
+            <h2 className="text-xl font-semibold text-indigo-600 mb-2">{t.level} {level + 1}</h2>
+            <div className="flex justify-center mb-2">
+              <div
+                className={`grid gap-[2px] ${theme.gridBg} p-2 rounded-xl shadow-md w-[95%] max-w-[100vw] max-h-[50vh]`}
+                style={{ gridTemplateColumns: `repeat(${boardSizes[level]?.cols || 9}, minmax(0, 1fr))` }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleGridTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {gameState.board.map((row, rowIndex) =>
+                  row.map((letter, colIndex) => (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`w-[11vw] h-[11vw] flex items-center justify-center text-base font-semibold border rounded-lg
+                        ${isCellFound(rowIndex, colIndex) ? theme.foundCell :
+                          isCellSelected(rowIndex, colIndex) ? 'bg-yellow-300' :
+                          foundWords.length === gameState.words.length && isHiddenWordLetter(rowIndex, colIndex) ? theme.hiddenWordCell :
+                          foundWords.length === gameState.words.length && isExtraLetter(rowIndex, colIndex) ? 'bg-black text-opacity-0' :
+                          foundWords.length === gameState.words.length ? 'opacity-0' :
+                          'bg-white'}
+                        transition duration-200 select-none`}
+                    >
+                      {letter}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+            <div className="mb-2 max-w-[95%] mx-auto">
+              <div className="flex flex-wrap justify-center gap-1 mt-1 h-[100px] overflow-hidden">
+                {gameState.words.map(({ word }) => (
+                  <span
+                    key={word}
+                    className={`w-[70px] h-[24px] flex items-center justify-center rounded-lg 
+                      ${foundWords.includes(word) ? 'bg-gray-300 line-through' : mode === 'hardMode' && !foundWords.includes(word) ? 'bg-gray-300 opacity-0' : theme.wordBg}
+                      text-[12px] font-bold text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap`}
+                  >
+                    {mode === 'hardMode' && !foundWords.includes(word) ? '' : word}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mb-2 max-w-[95%] mx-auto mt-4">
+            <div className="flex justify-center items-center gap-2 mt-1">
+              <input
+                type="text"
+                value={hiddenWordGuess}
+                onChange={(e) => setHiddenWordGuess(e.target.value)}
+                className="border-2 border-indigo-300 p-1 rounded-lg text-sm focus:outline-none focus:border-indigo-500 h-8 w-28"
+                placeholder={t.hiddenWordPlaceholder}
+              />
+              <button
+                onClick={handleHiddenWordSubmit}
+                className="bg-indigo-500 text-white px-3 py-1 rounded-lg hover:bg-indigo-600 text-sm h-8 transition duration-300"
+              >
+                {t.checkButton}
+              </button>
+              <button
+                onClick={goToHome}
+                className="bg-gray-500 text-white px-3 py-1 rounded-lg hover:bg-gray-600 text-sm h-8 transition duration-300"
+              >
+                {t.homeButton}
+              </button>
+            </div>
+          </div>
+          <div className="w-full flex justify-center items-center text-center py-1 text-gray-600 mt-auto">
+            <div className="text-xs">{t.footer}</div>
+          </div>
+          <Modal
+            isOpen={modal.isOpen}
+            message={modal.message}
+            isSuccess={modal.isSuccess}
+            onClose={closeModal}
+            language={language}
+          />
+        </div>
+      );
+    } catch (err) {
+      console.error('WordHunt render error:', err);
+      return null;
+    }
+  }
+
+  function App() {
+    try {
+      const [isGameStarted, setIsGameStarted] = React.useState(false);
+      const [language, setLanguage] = React.useState('tr');
+      const [mode, setMode] = React.useState('easyMode');
+
+      const startGame = (selectedMode) => {
+        try {
+          console.log('Starting game... Language:', language, 'Mode:', selectedMode);
+          setMode(selectedMode);
+          setIsGameStarted(true);
+        } catch (e) {
+          console.error("startGame error:", e);
+        }
+      };
+
+      const goToHome = () => {
+        try {
+          console.log('Returning to home...');
+          setIsGameStarted(false);
+          setMode('easyMode');
+        } catch (e) {
+          console.error("goToHome error:", e);
+        }
+      };
+
+      return (
+        <ErrorBoundary>
+          {isGameStarted ? (
+            <WordHunt goToHome={goToHome} language={language} mode={mode} />
+          ) : (
+            <HomePage startGame={startGame} language={language} setLanguage={setLanguage} />
+          )}
+        </ErrorBoundary>
+      );
+    } catch (err) {
+      console.error('App render error:', err);
+      return null;
+    }
+  }
+
+  try {
+    console.log('ReactDOM.render called...');
+    if (typeof ReactDOM !== 'undefined' && document.getElementById('root')) {
+      ReactDOM.render(<App />, document.getElementById('root'));
+    } else {
+      console.error('ReactDOM or root element not found');
+    }
+  } catch (e) {
+    console.error("ReactDOM.render error:", e);
+  }
+</script>
+<script>
+  (function(){
+    function c(){
+      var b = a.contentDocument || a.contentWindow.document;
+      if(b){
+        var d = b.createElement('script');
+        d.innerHTML = "window.__CF$cv$params={r:'936e88c63c677b92',t:'MTc0NTc1OTE1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+        b.getElementsByTagName('head')[0].appendChild(d);
+      }
+    }
+    if(document.body){
+      var a = document.createElement('iframe');
+      a.height = 1;
+      a.width = 1;
+      a.style.position = 'absolute';
+      a.style.top = 0;
+      a.style.left = 0;
+      a.style.border = 'none';
+      a.style.visibility = 'hidden';
+      document.body.appendChild(a);
+      if('loading' !== document.readyState) c();
+      else if(window.addEventListener) document.addEventListener('DOMContentLoaded', c);
+      else {
+        var e = document.onreadystatechange || function(){};
+        document.onreadystatechange = function(b){
+          e(b);
+          if('loading' !== document.readyState){
+            document.onreadystatechange = e;
+            c();
+          }
+        };
+      }
+    }
+  })();
+</script>
+</body>
+</html>
