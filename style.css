@@ -152,25 +152,73 @@ body.game-active #oyun-arayuzu {
     height: 100%;
 }
 
+/* --- ADAM ASMACA POZİSYON AYARLARI (DÜZELTİLMİŞ) --- */
 #adam-asmaca {
     position: relative;
-    width: clamp(300px, 65vh, 550px);
+    width: clamp(300px, 65vh, 550px); /* Boyutlandırma aynı kalıyor */
     height: clamp(300px, 65vh, 550px);
 }
-#adam-asmaca .parca { position: absolute; background-color: #333; border-radius: 4px;}
+#adam-asmaca .parca { 
+    position: absolute; 
+    background-color: #333; 
+    border-radius: 4px;
+}
 .direk-base { width: 90%; height: 12px; bottom: 0; left: 5%;}
 .direk { width: 12px; height: 100%; bottom: 0; left: 15%;}
 .asma { width: 50%; height: 12px; top: 5%; left: 15%;}
 .ip { width: 4px; height: 10%; top: 5%; left: 60%; }
-.kafa { display: none; width: 15%; height: 15%; top: 15%; left: 52.5%; border: 6px solid #333; border-radius: 50%;}
-/* --- ADAM ASMACA POZİSYON AYARLARI --- */
-.govde { display: none; width: 8px; height: 28%; top: 30%; left: calc(52.5% + 7.5% - 4px); }
-.kol { display: none; width: 15%; height: 8px; top: 35%;}
-.sol-kol { left: 38%; transform: rotate(45deg); }
-.sag-kol { left: 55%; transform: rotate(-45deg); }
-.bacak { display: none; width: 15%; height: 8px; top: 57%;}
-.sol-bacak { left: 38%; transform: rotate(-45deg); }
-.sag-bacak { left: 55%; transform: rotate(45deg); }
+
+/* Kafa: Yuvarlak olması için border-radius eklendi ve kutu modeli ayarlandı */
+.kafa { 
+    display: none; 
+    width: 15%; 
+    height: 15%; 
+    top: 15%; 
+    left: 52.5%; 
+    border: 6px solid #333; 
+    border-radius: 50%; /* BU SATIR KAFANIN YUVARLAK OLMASINI SAĞLAR */
+    background-color: transparent; /* İç rengi olmasın, sadece çerçeve */
+    box-sizing: border-box;
+}
+
+/* Gövde, Kollar ve Bacaklar: Gövdeye bitişik olacak şekilde yeniden konumlandırıldı */
+.govde { 
+    display: none; 
+    width: 8px; 
+    height: 28%; 
+    top: 30%; /* Kafanın hemen altından başlar */
+    left: calc(60% - 4px); /* İpin merkeziyle hizalı */
+}
+.kol { 
+    display: none; 
+    width: 15%; 
+    height: 8px; 
+    top: 38%;  /* Gövdenin üst kısmına bağlandı */
+    transform-origin: center; /* Dönüş merkezi ayarlandı */
+}
+.sol-kol { 
+    left: 45%; 
+    transform: rotate(45deg); 
+}
+.sag-kol { 
+    left: 60%; 
+    transform: rotate(-45deg); 
+}
+.bacak { 
+    display: none; 
+    width: 15%; 
+    height: 8px; 
+    top: 57%; /* Gövdenin alt kısmına bağlandı */
+    transform-origin: center;
+}
+.sol-bacak { 
+    left: 45%; 
+    transform: rotate(-45deg); 
+}
+.sag-bacak { 
+    left: 60%; 
+    transform: rotate(45deg); 
+}
 
 
 /* Sağ Sütun: İnteraktif Alan */
