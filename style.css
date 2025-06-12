@@ -1,0 +1,308 @@
+/* --- Genel Sayfa ve Font Ayarları --- */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    background: #f0f2f5; /* Nötr ve modern bir arka plan */
+    color: #333;
+}
+
+.oyun-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* İçeriği dikey ve yatayda ortala */
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+/* --- BAŞLANGIÇ EKRANI --- */
+#baslangic-ekrani {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 2rem;
+    transition: opacity 0.5s ease-out;
+}
+
+body.game-active #baslangic-ekrani {
+    display: none;
+}
+
+.ust-dekor-resim {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+}
+
+#oyun-kurallari {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 800px;
+}
+
+#oyun-kurallari h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #007bff;
+    margin: 0 0 1rem 0;
+}
+
+#oyun-kurallari p {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+#alt-kisim {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+#oyun-basla {
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, #28a745, #218838);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+#oyun-basla:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.5);
+}
+
+#secim-container {
+    display: flex;
+    gap: 1rem;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+#seviye-secimi, #dil-secimi {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+#seviye-secimi span, #dil-secimi span {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #444;
+}
+#seviye-secimi button, #dil-secimi button {
+    padding: 0.6rem 1.2rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background: #f8f9fa;
+}
+#seviye-secimi button.active, #dil-secimi button.active {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* --- OYUN ARAYÜZÜ (İKİ SÜTUNLU YAPI) --- */
+#oyun-arayuzu {
+    display: none;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 40% 60%;
+    gap: 2rem;
+    align-items: center;
+}
+body.game-active #oyun-arayuzu {
+    display: grid;
+}
+
+/* Sol Sütun: Adam Asmaca */
+#gorsel-alan {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#adam-asmaca {
+    position: relative;
+    width: 70vh; /* Yüksekliğe göre ölçeklenir */
+    height: 70vh;
+    max-width: 600px; /* Maksimum genişlik */
+    max-height: 600px;
+}
+.parca { position: absolute; background-color: #333; }
+.direk-base { width: 90%; height: 15px; bottom: 0; left: 5%;}
+.direk { width: 15px; height: 100%; bottom: 0; left: 15%;}
+.asma { width: 50%; height: 15px; top: 5%; left: 15%;}
+.ip { width: 5px; height: 10%; top: 5%; left: 60%; }
+.kafa { width: 15%; height: 15%; top: 15%; left: 52.5%; border: 8px solid #333; border-radius: 50%; background-color: transparent; display: none; }
+.govde { width: 10px; height: 25%; top: 30%; left: calc(52.5% + 7.5% - 5px); display: none; }
+.kol { width: 15%; height: 8px; position: absolute; top: 35%; display: none; }
+.sol-kol { left: 40%; transform: rotate(30deg); }
+.sag-kol { right: 20%; transform: rotate(-30deg); }
+.bacak { width: 15%; height: 8px; position: absolute; top: 54%; display: none; }
+.sol-bacak { left: 40%; transform: rotate(-30deg); }
+.sag-bacak { right: 20%; transform: rotate(30deg); }
+
+
+/* Sağ Sütun: İnteraktif Alan */
+#interaktif-alan {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+#kelime-turu {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #d97706;
+    background: rgba(217, 119, 6, 0.1);
+    padding: 0.5rem 1.5rem;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+#kelime-alani {
+    font-size: 5.5rem; /* Büyük ve okunaklı */
+    font-weight: 600;
+    color: #10b981;
+    letter-spacing: 1rem;
+    margin: 1rem 0;
+    min-height: 100px;
+}
+
+#ipucu-buton {
+    padding: 0.7rem 1.5rem;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s, background 0.2s;
+}
+#ipucu-buton:hover:not(:disabled) { transform: scale(1.05); }
+#ipucu-buton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+#harf-alani {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 700px;
+}
+#harf-alani button {
+    font-size: 1.5rem;
+    font-weight: 600;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    aspect-ratio: 1 / 1;
+    transition: all 0.2s ease;
+}
+#harf-alani button:hover:not(:disabled) { background: #e9ecef; border-color: #aaa; transform: translateY(-2px); }
+#harf-alani button:disabled { opacity: 0.4; cursor: not-allowed; }
+.dogru-harf { background: #10b981 !important; color: #fff !important; border-color: #10b981 !important; }
+.yanlis-harf { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
+
+#sure {
+    width: 100%;
+    max-width: 700px;
+    height: 25px;
+    background: #e5e7eb;
+    border-radius: 25px;
+    position: relative;
+    overflow: hidden;
+}
+#sure-dolgu { height: 100%; background: linear-gradient(to right, #dc2626, #b91c1c); width: 100%; transition: width 0.5s linear; }
+#sure-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 1rem; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+#buton-konteyner {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+}
+#soruyu-yenile, #anasayfaya-don {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+#soruyu-yenile { background: #f59e0b; color: #fff; }
+#anasayfaya-don { background: #3b82f6; color: #fff; }
+#soruyu-yenile:hover, #anasayfaya-don:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* --- Pop-up ve Footer Stilleri (Boyut ve Font Ayarları) --- */
+#oyun-sonu, #kaybetme-popup {
+    display: none;
+    flex-direction: column;
+    gap: 1rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 600px;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+#oyun-sonu { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #1f2937; }
+#kaybetme-popup { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+
+#oyun-sonu h2, #kaybetme-popup h2 { font-size: 2.2rem; }
+#oyun-sonu p, #kaybetme-popup p { font-size: 1.1rem; }
+#kaybetme-popup .dogru-kelime { font-size: 1.8rem; font-weight: bold; color: #ffdddd; }
+#oyun-sonu button, #kaybetme-popup button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    width: 60%;
+    margin: 0.5rem auto 0;
+}
+#popup-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; }
+
+#footer {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: #777;
+    text-align: center;
+    display: block; /* Footer hep görünsün */
+}
+#footer img { display: none; } /* Footer logosu kaldırıldı, sadelik için */
