@@ -94,6 +94,7 @@ let aktifDil = "tr", secilenTur, secilenKelime, gorunenKelime;
 let kalanHak, baslangicHak, tahminEdilenHarfler;
 let skor = 0, zorluk = "kolay", harfButonlari = [];
 let sure, sureInterval, ipucuHakki = 1;
+let sonKategori = null;
 
 let istatistikler = JSON.parse(localStorage.getItem("oyunIstatistikleri")) || { toplamOyun: 0, kazananOyun: 0 };
 
@@ -113,16 +114,20 @@ function dilGuncelle() {
 
 function adamParcalariSifirla() { adamParcalariDiv.forEach(p => p.style.display = "none"); }
 
+// Eski kelimeSec fonksiyonunu silip bunu yapıştırın
 function kelimeSec() {
-    let turler = Object.keys(kelimeListesi[aktifDil]);
-    if (!secilenTur) secilenTur = turler[Math.floor(Math.random() * turler.length)];
+    let tumTurler = Object.keys(kelimeListesi[aktifDil]);
+    let uygunTurler = tumTurler.filter(tur => tur !== sonKategori);
+    if (uygunTurler.length === 0) { uygunTurler = tumTurler;    }
+    secilenTur = uygunTurler[Math.floor(Math.random() * uygunTurler.length)];
+    sonKategori = secilenTur;
     let kelimeler = kelimeListesi[aktifDil][secilenTur];
-    let uygunKelimeler;
-    if (zorluk === "kolay") { uygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length <= 5); baslangicHak = kalanHak = 6; }
-    else if (zorluk === "orta") { uygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length > 5 && k.replace(/\s/g, '').length <= 9); baslangicHak = kalanHak = 6; }
-    else { uygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length >= 10); baslangicHak = kalanHak = 6; }
-    if (uygunKelimeler.length === 0) uygunKelimeler = kelimeler;
-    secilenKelime = [...uygunKelimeler].sort(() => 0.5 - Math.random())[0];
+    let seviyeyeUygunKelimeler;
+    if (zorluk === "kolay") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length <= 5); baslangicHak = kalanHak = 6; }
+    else if (zorluk === "orta") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length > 5 && k.replace(/\s/g, '').length <= 9); baslangicHak = kalanHak = 6; }
+    else { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length >= 10); baslangicHak = kalanHak = 6; }
+    if (seviyeyeUygunKelimeler.length === 0) seviyeyeUygunKelimeler = kelimeler;
+    secilenKelime = [...seviyeyeUygunKelimeler].sort(() => 0.5 - Math.random())[0];
 }
 
 function kelimeyiGoster() {
@@ -225,6 +230,7 @@ function anasayfayaDon() {
     clearInterval(sureInterval);
     document.onkeydown = null;
     secilenTur = null;
+    sonKategori = null;
     dilGuncelle();
 }
 
