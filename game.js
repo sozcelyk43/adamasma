@@ -123,8 +123,8 @@ function kelimeSec() {
     sonKategori = secilenTur;
     let kelimeler = kelimeListesi[aktifDil][secilenTur];
     let seviyeyeUygunKelimeler;
-    if (zorluk === "kolay") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length <= 5); baslangicHak = kalanHak = 6; }
-    else if (zorluk === "orta") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length > 5 && k.replace(/\s/g, '').length <= 9); baslangicHak = kalanHak = 6; }
+    if (zorluk === "kolay") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length <= 5); baslangicHak = kalanHak = 7; }
+    else if (zorluk === "orta") { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length > 5 && k.replace(/\s/g, '').length <= 9); baslangicHak = kalanHak = 7; }
     else { seviyeyeUygunKelimeler = kelimeler.filter(k => k.replace(/\s/g, '').length >= 10); baslangicHak = kalanHak = 6; }
     if (seviyeyeUygunKelimeler.length === 0) seviyeyeUygunKelimeler = kelimeler;
     secilenKelime = [...seviyeyeUygunKelimeler].sort(() => 0.5 - Math.random())[0];
