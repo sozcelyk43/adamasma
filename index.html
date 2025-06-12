@@ -6,8 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<div class="oyun-container">
+<body class="">
 
     <div id="baslangic-ekrani">
         <img src="logo.png" alt="Adam Asmaca Dekor" class="ust-dekor-resim">
@@ -65,32 +64,31 @@
         </div>
     </div>
 
-    <div id="oyun-sonu" role="dialog" aria-modal="true">
+    <div id="popup-backdrop"></div>
+    <div id="oyun-sonu" class="popup" role="dialog" aria-modal="true">
         <h2 id="oyun-sonu-mesaj"></h2>
         <p>Skor: <span id="oyun-sonu-skor"></span></p>
         <p>Toplam Oyun: <span id="oyun-sonu-toplam"></span></p>
         <p>Kazanılan Oyun: <span id="oyun-sonu-kazanan"></span></p>
         <p>Kazanma Oranı: <span id="oyun-sonu-oran"></span>%</p>
-        <button id="sonraki-kelime" aria-label="Sonraki kelimeye geç">Sonraki Kelime</button>
-        <button id="popup-anasayfaya-don" aria-label="Anasayfaya dön">Anasayfaya Dön</button>
+        <div class="popup-butonlar">
+            <button id="sonraki-kelime" aria-label="Sonraki kelimeye geç">Sonraki Kelime</button>
+            <button id="popup-anasayfaya-don" aria-label="Anasayfaya dön">Anasayfaya Dön</button>
+        </div>
     </div>
-    <div id="popup-backdrop"></div>
-    <div id="kaybetme-popup" role="dialog" aria-modal="true">
+    <div id="kaybetme-popup" class="popup" role="dialog" aria-modal="true">
         <h2 id="kaybetme-mesaj"></h2>
         <p>Skor: <span id="kaybetme-skor"></span></p>
         <p>Toplam Oyun: <span id="kaybetme-toplam"></span></p>
         <p>Kazanılan Oyun: <span id="kaybetme-kazanan"></span></p>
         <p>Kazanma Oranı: <span id="kaybetme-oran"></span>%</p>
-        <p>Doğru Kelime: <span class="dogru-kelime"></span></p>
         <button id="popup-anasayfaya-don-kaybetme" aria-label="Anasayfaya dön">Anasayfaya Dön</button>
     </div>
-
+    
     <div id="footer">
         <span>© 2025 Ozcelik Inc. Tüm hakları saklıdır.</span>
-        <img src="logo.png" alt="Ozcelik Inc. Logo">
     </div>
 
-</div>
 <script src="game.js"></script>
 </body>
 </html>
