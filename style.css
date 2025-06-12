@@ -1,66 +1,81 @@
 /* --- Genel Sayfa ve Font Ayarları --- */
+:root {
+    --arkaplan: #f0f2f5;
+    --ana-metin: #333;
+    --ana-renk: #007bff;
+    --yesil: #28a745;
+    --kirmizi: #dc3545;
+    --turuncu: #fd7e14;
+    --golge: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
 html, body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
     font-family: 'Poppins', sans-serif;
-    background: #f0f2f5; /* Nötr ve modern bir arka plan */
-    color: #333;
+    background: var(--arkaplan);
+    color: var(--ana-metin);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.oyun-container {
-    width: 100%;
-    height: 100%;
+/* --- ARAYÜZ GEÇİŞ KONTROLÜ --- */
+#baslangic-ekrani, #oyun-arayuzu, #footer {
+    display: none; /* Varsayılan olarak tümünü gizle */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Başlangıçta sadece başlangıç ekranı görünsün */
+body:not(.game-active) #baslangic-ekrani {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* İçeriği dikey ve yatayda ortala */
-    padding: 2rem;
-    box-sizing: border-box;
+    opacity: 1;
+}
+body:not(.game-active) #footer {
+    display: block;
+    opacity: 1;
+}
+
+/* Oyun aktif olduğunda sadece oyun arayüzü görünsün */
+body.game-active #oyun-arayuzu {
+    display: grid;
+    opacity: 1;
 }
 
 /* --- BAŞLANGIÇ EKRANI --- */
 #baslangic-ekrani {
-    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
     gap: 2rem;
-    transition: opacity 0.5s ease-out;
-}
-
-body.game-active #baslangic-ekrani {
-    display: none;
+    padding: 2rem;
 }
 
 .ust-dekor-resim {
-    width: 100%;
-    max-width: 350px;
-    height: auto;
+    max-width: 300px;
 }
 
 #oyun-kurallari {
     background: #fff;
     border-radius: 16px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 800px;
+    box-shadow: var(--golge);
+    padding: 2rem 2.5rem;
+    max-width: 700px;
+    text-align: center;
 }
 
 #oyun-kurallari h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #007bff;
+    font-size: 2rem;
+    color: var(--ana-renk);
     margin: 0 0 1rem 0;
 }
 
 #oyun-kurallari p {
-    font-size: 1.2rem;
-    color: #555;
+    font-size: 1.1rem;
     line-height: 1.6;
 }
 
@@ -72,20 +87,19 @@ body.game-active #baslangic-ekrani {
 }
 
 #oyun-basla {
-    padding: 1rem 2.5rem;
-    background: linear-gradient(135deg, #28a745, #218838);
+    padding: 0.8rem 2.5rem;
+    background: var(--yesil);
     color: #fff;
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 600;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
 }
 #oyun-basla:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.5);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
 #secim-container {
@@ -94,7 +108,6 @@ body.game-active #baslangic-ekrani {
     background: #fff;
     padding: 1rem;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 #seviye-secimi, #dil-secimi {
     display: flex;
@@ -103,35 +116,32 @@ body.game-active #baslangic-ekrani {
 }
 #seviye-secimi span, #dil-secimi span {
     font-weight: 600;
-    font-size: 1.1rem;
-    color: #444;
+    font-size: 1rem;
 }
 #seviye-secimi button, #dil-secimi button {
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1rem;
     border: 2px solid #ddd;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s ease;
+    font-size: 0.9rem;
     background: #f8f9fa;
+    transition: all 0.2s ease;
 }
 #seviye-secimi button.active, #dil-secimi button.active {
-    background: #007bff;
+    background: var(--ana-renk);
     color: #fff;
-    border-color: #007bff;
+    border-color: var(--ana-renk);
 }
 
-/* --- OYUN ARAYÜZÜ (İKİ SÜTUNLU YAPI) --- */
+/* --- OYUN ARAYÜZÜ (1920x1080 İÇİN OPTİMİZE EDİLDİ) --- */
 #oyun-arayuzu {
-    display: none;
     width: 100%;
     height: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
     grid-template-columns: 40% 60%;
-    gap: 2rem;
+    gap: 3rem;
     align-items: center;
-}
-body.game-active #oyun-arayuzu {
-    display: grid;
 }
 
 /* Sol Sütun: Adam Asmaca */
@@ -144,24 +154,23 @@ body.game-active #oyun-arayuzu {
 
 #adam-asmaca {
     position: relative;
-    width: 70vh; /* Yüksekliğe göre ölçeklenir */
-    height: 70vh;
-    max-width: 600px; /* Maksimum genişlik */
-    max-height: 600px;
+    width: clamp(300px, 65vh, 550px);
+    height: clamp(300px, 65vh, 550px);
 }
-.parca { position: absolute; background-color: #333; }
-.direk-base { width: 90%; height: 15px; bottom: 0; left: 5%;}
-.direk { width: 15px; height: 100%; bottom: 0; left: 15%;}
-.asma { width: 50%; height: 15px; top: 5%; left: 15%;}
-.ip { width: 5px; height: 10%; top: 5%; left: 60%; }
-.kafa { width: 15%; height: 15%; top: 15%; left: 52.5%; border: 8px solid #333; border-radius: 50%; background-color: transparent; display: none; }
-.govde { width: 10px; height: 25%; top: 30%; left: calc(52.5% + 7.5% - 5px); display: none; }
-.kol { width: 15%; height: 8px; position: absolute; top: 35%; display: none; }
-.sol-kol { left: 40%; transform: rotate(30deg); }
-.sag-kol { right: 20%; transform: rotate(-30deg); }
-.bacak { width: 15%; height: 8px; position: absolute; top: 54%; display: none; }
-.sol-bacak { left: 40%; transform: rotate(-30deg); }
-.sag-bacak { right: 20%; transform: rotate(30deg); }
+#adam-asmaca .parca { position: absolute; background-color: #333; border-radius: 4px;}
+.direk-base { width: 90%; height: 12px; bottom: 0; left: 5%;}
+.direk { width: 12px; height: 100%; bottom: 0; left: 15%;}
+.asma { width: 50%; height: 12px; top: 5%; left: 15%;}
+.ip { width: 4px; height: 10%; top: 5%; left: 60%; }
+.kafa { display: none; width: 15%; height: 15%; top: 15%; left: 52.5%; border: 6px solid #333; border-radius: 50%;}
+/* --- ADAM ASMACA POZİSYON AYARLARI --- */
+.govde { display: none; width: 8px; height: 28%; top: 30%; left: calc(52.5% + 7.5% - 4px); }
+.kol { display: none; width: 15%; height: 8px; top: 35%;}
+.sol-kol { left: 38%; transform: rotate(45deg); }
+.sag-kol { left: 55%; transform: rotate(-45deg); }
+.bacak { display: none; width: 15%; height: 8px; top: 57%;}
+.sol-bacak { left: 38%; transform: rotate(-45deg); }
+.sag-bacak { left: 55%; transform: rotate(45deg); }
 
 
 /* Sağ Sütun: İnteraktif Alan */
@@ -170,40 +179,56 @@ body.game-active #oyun-arayuzu {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
     height: 100%;
-    padding: 2rem;
-    box-sizing: border-box;
+    gap: 1.25rem; /* Elementler arası boşluk artırıldı */
 }
 
 #kelime-turu {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #d97706;
-    background: rgba(217, 119, 6, 0.1);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--turuncu);
+    background: rgba(253, 126, 20, 0.1);
     padding: 0.5rem 1.5rem;
     border-radius: 12px;
     text-transform: uppercase;
 }
 
+/* --- KELİME ALT ÇİZGİLERİ --- */
 #kelime-alani {
-    font-size: 5.5rem; /* Büyük ve okunaklı */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    min-height: 80px;
+}
+.harf-kutusu {
+    font-size: 3.5rem;
     font-weight: 600;
-    color: #10b981;
-    letter-spacing: 1rem;
-    margin: 1rem 0;
-    min-height: 100px;
+    color: var(--ana-metin);
+    border-bottom: 4px solid #555;
+    min-width: 1em;
+    height: 1.2em;
+    text-align: center;
+    line-height: 1.2em;
+}
+#kelime-alani.uzun-kelime {
+    gap: 0.4rem;
+}
+#kelime-alani.uzun-kelime .harf-kutusu {
+    font-size: 2.5rem; /* Çok uzun kelimeler için fontu küçült */
 }
 
+
 #ipucu-buton {
-    padding: 0.7rem 1.5rem;
-    background: #3b82f6;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    padding: 0.6rem 1.5rem;
     font-size: 1rem;
-    transition: transform 0.2s, background 0.2s;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: var(--ana-renk);
+    color: #fff;
+    transition: transform 0.2s;
 }
 #ipucu-buton:hover:not(:disabled) { transform: scale(1.05); }
 #ipucu-buton:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -211,12 +236,12 @@ body.game-active #oyun-arayuzu {
 #harf-alani {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 0.75rem;
+    gap: 0.5rem;
     width: 100%;
-    max-width: 700px;
+    max-width: 650px;
 }
 #harf-alani button {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 600;
     border: 2px solid #ccc;
     border-radius: 8px;
@@ -226,83 +251,99 @@ body.game-active #oyun-arayuzu {
     transition: all 0.2s ease;
 }
 #harf-alani button:hover:not(:disabled) { background: #e9ecef; border-color: #aaa; transform: translateY(-2px); }
-#harf-alani button:disabled { opacity: 0.4; cursor: not-allowed; }
-.dogru-harf { background: #10b981 !important; color: #fff !important; border-color: #10b981 !important; }
-.yanlis-harf { background: #ef4444 !important; color: #fff !important; border-color: #ef4444 !important; }
+#harf-alani button:disabled { opacity: 0.4; transform: none !important; }
+.dogru-harf { background: var(--yesil) !important; color: #fff !important; border-color: var(--yesil) !important; }
+.yanlis-harf { background: var(--kirmizi) !important; color: #fff !important; border-color: var(--kirmizi) !important; }
 
 #sure {
     width: 100%;
-    max-width: 700px;
-    height: 25px;
+    max-width: 650px;
+    height: 20px;
     background: #e5e7eb;
-    border-radius: 25px;
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
 }
-#sure-dolgu { height: 100%; background: linear-gradient(to right, #dc2626, #b91c1c); width: 100%; transition: width 0.5s linear; }
-#sure-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 1rem; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+#sure-dolgu { height: 100%; background: var(--kirmizi); width: 100%; }
+#sure-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 0.9rem; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 #buton-konteyner {
     display: flex;
     gap: 1rem;
     width: 100%;
-    max-width: 700px;
+    max-width: 650px;
 }
 #soruyu-yenile, #anasayfaya-don {
     flex: 1;
-    padding: 0.8rem 1rem;
+    padding: 0.7rem 1rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
+    color: #fff;
     transition: transform 0.2s, box-shadow 0.2s;
 }
-#soruyu-yenile { background: #f59e0b; color: #fff; }
-#anasayfaya-don { background: #3b82f6; color: #fff; }
+#soruyu-yenile { background: var(--turuncu); }
+#anasayfaya-don { background: var(--ana-renk); }
 #soruyu-yenile:hover, #anasayfaya-don:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* --- Pop-up ve Footer Stilleri (Boyut ve Font Ayarları) --- */
-#oyun-sonu, #kaybetme-popup {
+/* --- POPUP DÜZENLEMESİ --- */
+#popup-backdrop {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+}
+.popup {
     display: none;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.8rem;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
-    width: 600px;
-    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px; /* Genişlik küçültüldü */
+    padding: 2rem; /* İç boşluk ayarlandı */
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     text-align: center;
+    border: 3px solid #fff;
 }
 #oyun-sonu { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #1f2937; }
-#kaybetme-popup { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+#kaybetme-popup { background: linear-gradient(135deg, #f87171, #ef4444); color: #fff; }
 
-#oyun-sonu h2, #kaybetme-popup h2 { font-size: 2.2rem; }
-#oyun-sonu p, #kaybetme-popup p { font-size: 1.1rem; }
-#kaybetme-popup .dogru-kelime { font-size: 1.8rem; font-weight: bold; color: #ffdddd; }
-#oyun-sonu button, #kaybetme-popup button {
-    padding: 0.8rem 1.5rem;
+.popup h2 { font-size: 1.8rem; margin: 0; }
+.popup p { font-size: 1rem; margin: 0.2rem 0; }
+#kaybetme-popup .dogru-kelime { font-size: 1.5rem; font-weight: bold; color: #fff; background: rgba(0,0,0,0.2); padding: 0.2rem 0.5rem; border-radius: 6px; margin-top: 0.5rem; }
+.popup-butonlar { display: flex; gap: 1rem; margin-top: 1rem; }
+.popup button {
+    flex: 1;
+    padding: 0.8rem 1rem;
     font-size: 1rem;
-    width: 60%;
-    margin: 0.5rem auto 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.2s;
 }
-#popup-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; }
+.popup button:hover { transform: scale(1.05); }
 
+#sonraki-kelime { background: var(--yesil); color: #fff; }
+#popup-anasayfaya-don, #popup-anasayfaya-don-kaybetme { background: var(--ana-renk); color: #fff; }
+
+
+/* --- FOOTER --- */
 #footer {
     position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: 15px;
     font-size: 0.9rem;
     color: #777;
-    text-align: center;
-    display: block; /* Footer hep görünsün */
 }
-#footer img { display: none; } /* Footer logosu kaldırıldı, sadelik için */
