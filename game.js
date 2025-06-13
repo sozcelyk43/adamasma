@@ -176,7 +176,7 @@ function adamParcasiGoster() {
 function guncelleSure() {
     sure--;
     sureText.textContent = sure;
-    sureDolgu.style.width = `${(sure / (zorluk === 'kolay' ? 40 : zorluk === 'orta' ? 50 : 60)) * 100}%`;
+    sureDolgu.style.width = `${(sure / (zorluk === 'kolay' ? 70 : zorluk === 'orta' ? 80 : 90)) * 100}%`;
     if (sure <= 0) oyunBitti(false);
 }
 
