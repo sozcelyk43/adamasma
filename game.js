@@ -186,7 +186,7 @@ function oyunaBasla() {
     kelimeSec();
     gorunenKelime = secilenKelime.split('').map(c => c === ' ' ? ' ' : '_');
     tahminEdilenHarfler = []; skor = 0; ipucuHakki = 1;
-    sure = zorluk === 'kolay' ? 40 : zorluk === 'orta' ? 50 : 60;
+    sure = zorluk === 'kolay' ? 70 : zorluk === 'orta' ? 80 : 90;
     
     ipucuButonu.disabled = false;
     dilGuncelle();
