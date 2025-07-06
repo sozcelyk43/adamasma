@@ -397,12 +397,13 @@ body.game-active #oyun-arayuzu {
 #sonraki-kelime { background: var(--yesil); color: #fff; }
 #popup-anasayfaya-don, #popup-anasayfaya-don-kaybetme { background: var(--ana-renk); color: #fff; }
 
-/* --- FOOTER --- */
 #footer {
     position: fixed;
     bottom: 10px;
+    left: 0; /* Eklendi */
+    right: 0; /* Eklendi */
+    text-align: center; /* Eklendi */
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.7);
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
