@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -37,7 +36,8 @@
                             <button id="en" class="dil-buton">EN</button>
                         </div>
                     </div>
-                    <button id="oyun-basla">Oyuna Başla</button>
+                    <button id="basarim-butonu">🏆 Başarımlar</button>
+                    <button id="oyun-basla" aria-label="Oyunu başlat">Oyuna Başla</button>
                 </div>
             </div>
         </div>
@@ -62,11 +62,12 @@
             <div id="interaktif-alan">
                 <div id="ust-panel">
                     <div id="kelime-turu"></div>
-                    <div id="sure" role="timer">
+                    <div id="sure">
                         <div id="sure-dolgu"></div>
                         <span id="sure-text">60</span>
                     </div>
                 </div>
+                <div id="kombo-mesaji"></div>
                 <div id="kelime-alani"></div>
                 <div id="harf-alani"></div>
                 <div id="buton-konteyner">
@@ -104,6 +105,14 @@
             </div>
             <button id="popup-anasayfaya-don-kaybetme">Ana Sayfa</button>
         </div>
+
+        <div id="basarim-popup" class="popup">
+            <h2>🏆 Başarımlar</h2>
+            <div id="basarim-listesi"></div>
+            <button id="basarim-kapat-buton">Kapat</button>
+        </div>
+    
+        <div id="basarim-bildirimi"></div>
 
     </main>
     

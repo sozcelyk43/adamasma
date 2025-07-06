@@ -1,4 +1,15 @@
-// Dil ve Kelime Listeleri (Değiştirilmedi)
+const basarimlar = {
+    ilk_zafer: { ad: "İlk Zafer", aciklama: "İlk oyununu kazan.", kazanildi: false },
+    kusursuz: { ad: "Kusursuz!", aciklama: "Hiç hata yapmadan bir kelime bil.", kazanildi: false },
+    hizli: { ad: "Zamana Karşı", aciklama: "Bir kelimeyi 30 saniyeden fazla süre varken bil.", kazanildi: false },
+    seri_5: { ad: "Sıcak Gidiyor...", aciklama: "5 oyun üst üste kazan.", kazanildi: false },
+    gurme: { ad: "Gurme", aciklama: "'Yemekler' kategorisinde 5 kelime bil.", kazanildi: false }
+};
+
+let kazanilanKategoriler = {};
+let ustUsteKazanma = 0;
+
+
 const dil = {
     tr: {
         ustBaslik: "Ozcelik Inc.",
@@ -41,6 +52,7 @@ const dil = {
         kurallar: "Welcome to Hangman! Your goal is to guess the word letter by letter. Each wrong guess draws a part of the hangman. You have 6 wrong guesses. Try to find the word before time runs out! Good luck!"
     }
 };
+
 const kelimeListesi = {
     tr: {
         sehirler: ["ADANA", "ADIYAMAN", "AFYONKARAHİSAR", "AĞRI", "AMASYA", "ANKARA", "ANTALYA", "ARTVİN", "AYDIN", "BALIKESİR", "BİLECİK", "BİNGÖL", "BİTLİS", "BOLU", "BURDUR", "BURSA", "ÇANAKKALE", "ÇANKIRI", "ÇORUM", "DENİZLİ", "DİYARBAKIR", "EDİRNE", "ELAZIĞ", "ERZİNCAN", "ERZURUM", "ESKİŞEHİR", "GAZİANTEP", "GİRESUN", "GÜMÜŞHANE", "HAKKARİ", "HATAY", "ISPARTA", "MERSİN", "İSTANBUL", "İZMİR", "KARS", "KASTAMONU", "KAYSERİ", "KIRKLARELİ", "KIRŞEHİR", "KOCAELİ", "KONYA", "KÜTAHYA", "MALATYA", "MANİSA", "KAHRAMANMARAŞ", "MARDİN", "MUĞLA", "MUŞ", "NEVŞEHİR", "NİĞDE", "ORDU", "RİZE", "SAKARYA", "SAMSUN", "SİİRT", "SİNOP", "SİVAS", "TEKİRDAĞ", "TOKAT", "TRABZON", "TUNCELİ", "ŞANLIURFA", "UŞAK", "VAN", "YOZGAT", "ZONGULDAK", "AKSARAY", "BAYBURT", "KARAMAN", "KIRIKKALE", "BATMAN", "ŞIRNAK", "BARTIN", "ARDAHAN", "IĞDIR", "YALOVA", "KARABÜK", "KİLİS", "OSMANİYE", "DÜZCE"],
@@ -62,7 +74,6 @@ const kelimeListesi = {
     }
 };
 
-// DOM Elementleri
 const body = document.body;
 const kelimeTuruAlani = document.getElementById("kelime-turu");
 const kelimeAlani = document.getElementById("kelime-alani");
@@ -90,18 +101,59 @@ const ipucuButonu = document.getElementById("ipucu-buton");
 const adamParcalari = document.querySelectorAll("#adam-asmaca .kafa, #adam-asmaca .govde, #adam-asmaca .sol-kol, #adam-asmaca .sag-kol, #adam-asmaca .sol-bacak, #adam-asmaca .sag-bacak");
 const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
 const popupAnasayfaButon2 = document.getElementById("popup-anasayfaya-don-kaybetme");
+const komboMesaji = document.getElementById("kombo-mesaji");
+const basarimButonu = document.getElementById("basarim-butonu");
+const basarimPopup = document.getElementById("basarim-popup");
+const basarimListesi = document.getElementById("basarim-listesi");
+const basarimKapatButon = document.getElementById("basarim-kapat-buton");
+const basarimBildirimi = document.getElementById("basarim-bildirimi");
 
+document.querySelectorAll('button').forEach(button => {    button.addEventListener('click', () => playSound('tiklama'));});
 
 let aktifDil = "tr", secilenTur, secilenKelime, gorunenKelime;
 let kalanHak, baslangicHak, tahminEdilenHarfler;
 let skor = 0, zorluk = "kolay", harfButonlari = [];
 let sure, sureInterval, ipucuHakki = 1;
 let sonKategori = null;
+let komboSayaci = 0;
+
 
 let istatistikler = JSON.parse(localStorage.getItem("oyunIstatistikleri")) || { toplamOyun: 0, kazananOyun: 0 };
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playSound(type) { try { const o = audioCtx.createOscillator(); o.type = type === "dogru" ? "sine" : "square"; o.frequency.setValueAtTime(type === "dogru" ? 800 : 200, audioCtx.currentTime); o.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime + 0.15); } catch (e) { console.error(e); } }
+
+function playSound(type) {
+    try {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g);
+        g.connect(audioCtx.destination);
+
+        let freq, duration, waveType;
+
+        switch (type) {
+            case "dogru":
+                freq = 800; duration = 0.15; waveType = "sine"; break;
+            case "yanlis":
+                freq = 200; duration = 0.15; waveType = "square"; break;
+            case "kazanma":
+                freq = 1200; duration = 0.5; waveType = "triangle"; break;
+            case "kaybetme":
+                freq = 150; duration = 0.8; waveType = "sawtooth"; break;
+            case "tiklama":
+                freq = 1000; duration = 0.05; waveType = "triangle"; g.gain.setValueAtTime(0.3, audioCtx.currentTime); break; // Daha düşük ses
+            default:
+                return;
+        }
+
+        o.type = waveType;
+        o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        o.start();
+        o.stop(audioCtx.currentTime + duration);
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 function dilGuncelle() {
     document.querySelector("#oyun-kurallari p").textContent = dil[aktifDil].kurallar;
@@ -157,19 +209,43 @@ function harfTahminEt(harf, buton) {
     let dogruTahmin = secilenKelime.includes(harf);
 
     if (dogruTahmin) {
-        secilenKelime.split('').forEach((h, i) => { if (h === harf) gorunenKelime[i] = harf; });
+        komboSayaci++; 
+        if (komboSayaci > 1) {
+            let bonusPuan = komboSayaci * 5;
+            skor += bonusPuan;
+            komboMesaji.textContent = `KOMBO x${komboSayaci}! +${bonusPuan}`;
+            komboMesaji.classList.add('goster');
+            setTimeout(() => {
+                komboMesaji.classList.remove('goster');
+            }, 1000);
+        }
+        let oncekiGorunum = [...gorunenKelime];
+        secilenKelime.split('').forEach((h, i) => {
+            if (h === harf) gorunenKelime[i] = h;
+        });
+        kelimeyiGoster();
+        secilenKelime.split('').forEach((h, i) => {
+            if (h === harf && oncekiGorunum[i] === '_') {
+                kelimeAlani.children[i].classList.add('yeni-harf');
+            }
+        });
         buton.classList.add("dogru-harf");
         playSound("dogru");
-        kelimeyiGoster();
         if (!gorunenKelime.includes('_')) oyunBitti(true);
     } else {
+        komboSayaci = 0;
         kalanHak--;
         buton.classList.add("yanlis-harf");
         playSound("yanlis");
         adamParcasiGoster();
+        body.classList.add('ekran-titremesi');
+        setTimeout(() => {
+            body.classList.remove('ekran-titremesi');
+        }, 500);
         if (kalanHak <= 0) oyunBitti(false);
     }
 }
+
 
 function adamParcasiGoster() {
     const adim = baslangicHak - kalanHak - 1;
@@ -186,6 +262,7 @@ function guncelleSure() {
 }
 
 function oyunaBasla() {
+komboSayaci = 0; 
 
     document.querySelectorAll('.popup').forEach(p => p.classList.remove('popup-goster'));
     popupBackdrop.style.display = 'none';
@@ -218,7 +295,18 @@ function oyunBitti(kazandi) {
     harfButonlari.forEach(btn => btn.disabled = true);
     ipucuButonu.disabled = true;
     istatistikler.toplamOyun++;
-    if (kazandi) { istatistikler.kazananOyun++; skor += kalanHak * 10 + sure * 2; }
+    
+	if (kazandi) {
+ basarimKontrolEt();
+    istatistikler.kazananOyun++;
+    skor += kalanHak * 10 + sure * 2;
+    playSound("kazanma"); 
+} else 
+{
+ustUsteKazanma = 0; // Seriyi sıfırla
+    localStorage.setItem('ustUsteKazanma', '0');
+    playSound("kaybetme"); 
+}
     localStorage.setItem("oyunIstatistikleri", JSON.stringify(istatistikler));
     const oran = ((istatistikler.kazananOyun / istatistikler.toplamOyun) * 100).toFixed(1);
     popupBackdrop.style.display = "block";
@@ -265,21 +353,128 @@ function ipucuAl() {
     }
 }
 
+
+function basarimlariYukle() {
+    const kayitliBasarimlar = JSON.parse(localStorage.getItem('basarimlar'));
+    if (kayitliBasarimlar) {
+        Object.keys(basarimlar).forEach(key => {
+            if (kayitliBasarimlar[key]) {
+                basarimlar[key].kazanildi = true;
+            }
+        });
+    }
+    kazanilanKategoriler = JSON.parse(localStorage.getItem('kazanilanKategoriler')) || {};
+    ustUsteKazanma = JSON.parse(localStorage.getItem('ustUsteKazanma')) || 0;
+}
+
+function basarimKazan(key) {
+    if (!basarimlar[key].kazanildi) {
+        basarimlar[key].kazanildi = true;
+        basarimBildirimi.textContent = `🏆 Başarım Kazanıldı: ${basarimlar[key].ad}`;
+        basarimBildirimi.classList.add('goster');
+        localStorage.setItem('basarimlar', JSON.stringify(basarimlar));
+        setTimeout(() => {
+            basarimBildirimi.classList.remove('goster');
+        }, 3000);
+    }
+}
+
+function basarimKontrolEt() {
+    // İlk zafer
+    basarimKazan('ilk_zafer');
+
+    // Kusursuz oyun
+    if (kalanHak === baslangicHak) {
+        basarimKazan('kusursuz');
+    }
+    // Hızlı oyun
+    if (sure > 30) {
+        basarimKazan('hizli');
+    }
+    // Gurme
+    if(secilenTur === 'yemek') {
+        kazanilanKategoriler['yemek'] = (kazanilanKategoriler['yemek'] || 0) + 1;
+        if(kazanilanKategoriler['yemek'] >= 5) {
+            basarimKazan('gurme');
+        }
+        localStorage.setItem('kazanilanKategoriler', JSON.stringify(kazanilanKategoriler));
+    }
+    // 5'li seri
+    ustUsteKazanma++;
+    if(ustUsteKazanma >= 5) {
+        basarimKazan('seri_5');
+    }
+    localStorage.setItem('ustUsteKazanma', ustUsteKazanma.toString());
+}
+
+function basarimPopupGoster() {
+    basarimListesi.innerHTML = '';
+    Object.values(basarimlar).forEach(b => {
+        const div = document.createElement('div');
+        div.className = `basarim-ogesi ${b.kazanildi ? 'kazanildi' : ''}`;
+        div.innerHTML = `<h3>${b.ad} ${b.kazanildi ? '✔️' : '❌'}</h3><p>${b.aciklama}</p>`;
+        basarimListesi.appendChild(div);
+    });
+    popupBackdrop.style.display = 'block';
+    basarimPopup.classList.add('popup-goster');
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Başlangıçta başarımları yükle
+    basarimlariYukle();
+
+    // --- Olay Dinleyicileri (Hataları Giderilmiş Hali) ---
+    // Her onclick olayına, hem sesi çalması hem de ilgili fonksiyonu çalıştırması için
+    // bir ok fonksiyonu (=>) içinde komutları birleştiriyoruz.
+
     // Ana oyun butonları
-    oyunBaslaButonu.onclick = oyunaBasla;
-    soruyuYenileButonu.onclick = oyunaBasla; // Yenile butonu da yeni oyun başlatır
-    anasayfayaDonButonu.onclick = anasayfayaDon;
-    ipucuButonu.onclick = ipucuAl;
+    oyunBaslaButonu.onclick = () => {
+        playSound('tiklama');
+        oyunaBasla();
+    };
+    soruyuYenileButonu.onclick = () => {
+        playSound('tiklama');
+        oyunaBasla();
+    };
+    anasayfayaDonButonu.onclick = () => {
+        playSound('tiklama');
+        anasayfayaDon();
+    };
+    ipucuButonu.onclick = () => {
+        playSound('tiklama');
+        ipucuAl();
+    };
+
+    // Başarım pop-up butonları
+    basarimButonu.onclick = () => {
+        playSound('tiklama');
+        basarimPopupGoster();
+    };
+    basarimKapatButon.onclick = () => {
+        playSound('tiklama');
+        basarimPopup.classList.remove('popup-goster');
+        popupBackdrop.style.display = 'none';
+    };
 
     // Kazanma ve Kaybetme pop-up'ı içindeki butonlar
-    sonrakiKelimeButonu.onclick = oyunaBasla;
-    popupAnasayfaButon1.onclick = anasayfayaDon;
-    popupAnasayfaButon2.onclick = anasayfayaDon;
+    sonrakiKelimeButonu.onclick = () => {
+        playSound('tiklama');
+        oyunaBasla();
+    };
+    popupAnasayfaButon1.onclick = () => {
+        playSound('tiklama');
+        anasayfayaDon();
+    };
+    popupAnasayfaButon2.onclick = () => {
+        playSound('tiklama');
+        anasayfayaDon();
+    };
 
-    // Seviye ve Dil seçimi butonları
     document.querySelectorAll(".seviye-buton").forEach(btn => {
         btn.onclick = () => {
+            playSound('tiklama');
             document.querySelector(".seviye-buton.active").classList.remove("active");
             btn.classList.add("active");
             zorluk = btn.id;
@@ -288,6 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll(".dil-buton").forEach(btn => {
         btn.onclick = () => {
+            playSound('tiklama');
             document.querySelector(".dil-buton.active").classList.remove("active");
             btn.classList.add("active");
             aktifDil = btn.id;
@@ -295,6 +491,4 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // Oyunu başlangıç durumuyla hazırla
-    anasayfayaDon();
-});
+    anasayfayaDon();});
