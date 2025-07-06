@@ -395,3 +395,112 @@ body.game-active #oyun-arayuzu {
     font-size: 0.9rem;
     color: #777;
 }
+
+/* --- MOBİL CİHAZ OPTİMİZASYONU (768px ve altı) --- */
+@media (max-width: 768px) {
+
+    /* --- Genel Gövde ve Font Ayarları --- */
+    html, body {
+        /* Mobil cihazlarda yüksekliği dinamik olarak ayarlayarak
+           adres çubuğu gibi arayüz elemanlarının neden olduğu
+           boyut problemlerini gideriyoruz. */
+        height: 100%;
+        min-height: 100vh; /* Tam ekran yüksekliğini koru */
+    }
+
+    /* --- OYUN ARAYÜZÜ ANA YAPI DEĞİŞİKLİĞİ --- */
+    #oyun-arayuzu {
+        /* Grid yapısını dikey flex yapısına çeviriyoruz */
+        display: flex;
+        flex-direction: column; /* Öğeleri alt alta sırala */
+
+        /* Sütunlar arası boşluğu kaldırıp, genel bir iç boşluk veriyoruz */
+        gap: 0;
+        padding: 1rem; /* Kenar boşluklarını azalt */
+    }
+
+    /* --- GÖRSEL ALAN (ADAM ASMACA) --- */
+    #gorsel-alan {
+        /* Ekranın üst %40'lık kısmını kaplasın */
+        flex: 0 0 40%;
+        width: 100%;
+        justify-content: center; /* Ortalamayı koru */
+        align-items: flex-end; /* Adamı alanın altına doğru yasla */
+        padding-bottom: 1rem; /* Alttan biraz boşluk */
+    }
+
+    #adam-asmaca {
+        /* Yüksekliği ve genişliği mobil ekrana göre yeniden oranlıyoruz */
+        width: clamp(220px, 50vw, 300px);
+        height: clamp(220px, 35vh, 300px);
+    }
+    
+    .kafa { border-width: 4px; } /* Kafa çizgisini incelt */
+
+
+    /* --- İNTERAKTİF ALAN (HARFLER, BUTONLAR) --- */
+    #interaktif-alan {
+        /* Ekranın alt %60'lık kısmını esnek bir şekilde doldursun */
+        flex: 1 1 60%;
+        width: 100%;
+        justify-content: space-around; /* Elementleri dikeyde daha iyi dağıt */
+        gap: 0.8rem; /* Elementler arası boşluğu azalt */
+        min-height: 0; /* Flexbox hatasını önlemek için */
+    }
+
+    #kelime-turu {
+        font-size: 1.2rem;
+        padding: 0.4rem 1rem;
+    }
+
+    /* Kelime alt çizgilerini küçültüyoruz */
+    #kelime-alani .harf-kutusu {
+        font-size: 2rem; /* Font boyutunu mobil için küçült */
+        border-bottom-width: 3px;
+    }
+    #kelime-alani.uzun-kelime .harf-kutusu {
+        font-size: 1.5rem; /* Uzun kelimeler için daha da küçült */
+    }
+
+    #ipucu-buton {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    /* Harf klavyesini yeniden düzenliyoruz */
+    #harf-alani {
+        /* Daha az sütun ve daha küçük boşluklar */
+        grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+        gap: 0.4rem;
+        max-width: 100%; /* Tam genişlik kullan */
+    }
+
+    #harf-alani button {
+        font-size: 1rem; /* Harf fontlarını küçült */
+        border-width: 1px;
+    }
+    
+    /* Zaman çubuğu ve butonların boyutunu ayarlıyoruz */
+    #sure {
+        height: 15px;
+        max-width: 100%;
+    }
+    #sure-text { font-size: 0.8rem; }
+    
+    #buton-konteyner {
+        max-width: 100%;
+    }
+    #soruyu-yenile, #anasayfaya-don {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+
+    /* Popup pencereleri mobil için daha uygun hale getiriyoruz */
+    .popup {
+        width: 90%; /* Ekran genişliğinin %90'ını kaplasın */
+        padding: 1.5rem;
+    }
+    .popup h2 { font-size: 1.5rem; }
+    .popup p { font-size: 0.9rem; }
+    .popup-butonlar { flex-direction: column; } /* Butonları alt alta diz */
+}
