@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const soruyuYenileButonu = document.getElementById("soruyu-yenile");
     const ipucuButonu = document.getElementById("ipucu-buton");
     const adamParcalari = document.querySelectorAll("#adam-asmaca .kafa, #adam-asmaca .govde, #adam-asmaca .sol-kol, #adam-asmaca .sag-kol, #adam-asmaca .sol-bacak, #adam-asmaca .sag-bacak");
-const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
+    const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
     const popupAnasayfaButon2 = document.getElementById("popup-anasayfaya-don-kaybetme");
     const komboMesaji = document.getElementById("kombo-mesaji");
     const puanGostergesi = document.getElementById("puan-gostergesi");
@@ -93,14 +93,22 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
     let komboSayaci = 0;
     let ipucuKullanildi = false;
     let ipucsuzKazanmaSerisi = 0, ustUsteKazanma = 0;
-    let kazanilanKategoriler = {};
     let gunlukGorev = {};
     const ipucuBedeli = 50;
     const gunlukGorevOdulu = 250;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // --- OYUN FONKSİYONLARI ---
+    // --- MERKEZİ VERİ YÖNETİMİ ---
+    function istatistikleriGetir() {
+        const varsayilan = { toplamOyun: 0, kazananOyun: 0, kategoriDetaylari: {}, kazanilanDiller: {}, kazanilanZorluklar: {} };
+        const kayitli = JSON.parse(localStorage.getItem("oyunIstatistikleri"));
+        return { ...varsayilan, ...kayitli };
+    }
+    function istatistikleriKaydet(yeniIstatistikler) {
+        localStorage.setItem("oyunIstatistikleri", JSON.stringify(yeniIstatistikler));
+    }
 
+    // --- OYUN FONKSİYONLARI ---
     function playSound(type) {
         if (audioCtx.state === 'suspended') { audioCtx.resume(); }
         try {
@@ -274,7 +282,7 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
         if (harfButonlari) harfButonlari.forEach(btn => btn.disabled = true);
         ipucuButonu.disabled = true;
         
-        let istatistikler = JSON.parse(localStorage.getItem("oyunIstatistikleri")) || { toplamOyun: 0, kazananOyun: 0, kategoriDetaylari: {} };
+        let istatistikler = istatistikleriGetir();
         
         if (secilenTur) {
             if (!istatistikler.kategoriDetaylari[secilenTur]) {
@@ -309,7 +317,7 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
             localStorage.setItem('ipucsuzKazanmaSerisi', '0');
             playSound("kaybetme");
         }
-        localStorage.setItem("oyunIstatistikleri", JSON.stringify(istatistikler));
+        istatistikleriKaydet(istatistikler);
         
         const popup = kazandi ? oyunSonuAlani : kaybetmePopup;
         if (!kazandi) {
@@ -327,6 +335,7 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
         popupBackdrop.style.display = 'none';
         clearInterval(sureInterval);
         document.onkeydown = null;
+        kullanilmisKelimeler = {};
         dilGuncelle();
         gunlukGorevUIGuncelle();
     }
@@ -382,7 +391,6 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
         }
         ustUsteKazanma = parseInt(localStorage.getItem('ustUsteKazanma')) || 0;
         ipucsuzKazanmaSerisi = parseInt(localStorage.getItem('ipucsuzKazanmaSerisi')) || 0;
-        kazanilanKategoriler = JSON.parse(localStorage.getItem('kazanilanKategoriler')) || {};
     }
 
     function basarimKazan(key) {
@@ -400,14 +408,13 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
     }
 
     function basarimKontrolEt() {
-        const istatistikler = JSON.parse(localStorage.getItem("oyunIstatistikleri")) || {};
+        const istatistikler = istatistikleriGetir();
         basarimKazan('ilk_zafer');
         if (kalanHak === baslangicHak) basarimKazan('kusursuz');
         if (sure > 30) basarimKazan('hizli');
         if(secilenTur === 'yemek') {
-            kazanilanKategoriler['yemek'] = (kazanilanKategoriler['yemek'] || 0) + 1;
-            if(kazanilanKategoriler['yemek'] >= 5) basarimKazan('gurme');
-            localStorage.setItem('kazanilanKategoriler', JSON.stringify(kazanilanKategoriler));
+            const kategoriVerisi = istatistikler.kategoriDetaylari.yemek || { kazanma: 0 };
+            if(kategoriVerisi.kazanma >= 5) basarimKazan('gurme');
         }
         if(ustUsteKazanma >= 5) basarimKazan('seri_5');
         if (kalanHak === 1) basarimKazan('kil_payi');
@@ -430,7 +437,7 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
     }
 
     function istatistikPopupGoster() {
-        const istatistikler = JSON.parse(localStorage.getItem("oyunIstatistikleri")) || {toplamOyun: 0, kazananOyun: 0, kategoriDetaylari: {}};
+        const istatistikler = istatistikleriGetir();
         const genelOran = istatistikler.toplamOyun > 0 ? ((istatistikler.kazananOyun / istatistikler.toplamOyun) * 100).toFixed(1) : 0;
         
         let icerikHTML = `
@@ -453,7 +460,6 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
 
         icerikHTML += '</tbody></table>';
         istatistikIcerik.innerHTML = icerikHTML;
-
         popupBackdrop.style.display = 'block';
         istatistikPopup.classList.add('popup-goster');
     }
@@ -494,9 +500,9 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
     }
 
     function gunlukGorevIlerlemeKaydet() {
-        if (gunlukGorev.kategori === secilenTur && gunlukGorev.ilerleme < gunlukGorev.hedef) {
+        if (gunlukGorev.kategori === secilenTur && !gunlukGorev.odulAlindi) {
             gunlukGorev.ilerleme++;
-            if (gunlukGorev.ilerleme >= gunlukGorev.hedef && !gunlukGorev.odulAlindi) {
+            if (gunlukGorev.ilerleme >= gunlukGorev.hedef) {
                 gunlukGorev.odulAlindi = true;
                 puanGuncelle(puan + gunlukGorevOdulu);
                 basarimBildirimi.textContent = dil[aktifDil].gunluk_gorev_odul(gunlukGorevOdulu);
@@ -504,6 +510,7 @@ const popupAnasayfaButon1 = document.getElementById("popup-anasayfaya-don");
                 setTimeout(() => basarimBildirimi.classList.remove('goster'), 3000);
             }
             localStorage.setItem('gunlukGorev', JSON.stringify(gunlukGorev));
+            gunlukGorevUIGuncelle();
         }
     }
 
