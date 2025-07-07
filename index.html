@@ -83,22 +83,27 @@
             </div>
         </div>
         <div id="popup-backdrop"></div>
-        <div id="oyun-sonu" class="popup">
-            <h2 id="oyun-sonu-mesaj"></h2>
-            <div class="skor-detaylari">
-                <p>Kazanılan Puan: <span id="oyun-sonu-puan"></span></p>
-                <p>Toplam Puan: <span id="oyun-sonu-toplam-puan"></span></p>
-            </div>
-            <div class="popup-butonlar">
-                <button id="sonraki-kelime">Sonraki Kelime</button>
-                <button id="popup-anasayfaya-don">Ana Sayfa</button>
-            </div>
-        </div>
+<div id="oyun-sonu" class="popup">
+    <h2 id="oyun-sonu-mesaj"></h2>
+
+    <p>Doğru kelime: <span class="dogru-kelime" id="kazanan-kelime"></span></p>
+
+    <div class="skor-detaylari">
+        <p>Kazanılan Puan: <span id="oyun-sonu-puan"></span></p>
+        <p>Toplam Puan: <span id="oyun-sonu-toplam-puan"></span></p>
+    </div>
+    <div class="popup-butonlar">
+        <button id="popup-anasayfaya-don">Ana Sayfa</button>
+        <button id="sonraki-kelime">Sonraki Kelime</button>
+
+    </div>
+</div>
         <div id="kaybetme-popup" class="popup">
             <h2 id="kaybetme-mesaj"></h2>
             <div class="popup-butonlar">
-                <button id="popup-yeniden-oyna">Yeniden Oyna</button>
                 <button id="popup-anasayfaya-don-kaybetme">Ana Sayfa</button>
+                <button id="popup-yeniden-oyna">Yeniden Oyna</button>
+
             </div>
         </div>
         <div id="basarim-popup" class="popup">

@@ -174,10 +174,21 @@ document.addEventListener('DOMContentLoaded', () => {
         kullanilmisKelimeler[secilenTur].push(secilenKelime);
     }
 
-    function kelimeyiGoster() {
-        kelimeAlani.innerHTML = gorunenKelime.map(harf => `<span class="harf-kutusu">${harf === '_' ? '' : harf}</span>`).join('');
-        kelimeAlani.classList.toggle("uzun-kelime", secilenKelime.length > 12);
-    }
+function kelimeyiGoster() {
+    // Kelime dizisindeki her bir karakteri dönüştür
+    const kelimeHTML = gorunenKelime.map(harf => {
+        if (harf === ' ') {
+            // Eğer karakter boşluk ise, yeni stilimizi kullan
+            return '<span class="kelime-bosluk"></span>';
+        } else {
+            // Değilse, normal harf kutusunu kullan
+            return `<span class="harf-kutusu">${harf === '_' ? '' : harf}</span>`;
+        }
+    }).join(''); // Tüm HTML'i birleştir
+
+    kelimeAlani.innerHTML = kelimeHTML;
+    kelimeAlani.classList.toggle("uzun-kelime", secilenKelime.length > 12);
+}
 
     function harfButonlariOlustur() {
         const alfabe = aktifDil === "tr" ? "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -299,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
             puanGuncelle(puan + kazanilanPuan);
             oyunSonuPuan.textContent = `+${kazanilanPuan}`;
             oyunSonuToplamPuan.textContent = puan;
+        document.getElementById('kazanan-kelime').textContent = secilenKelime;
+
             istatistikler.kazananOyun++;
             if (secilenTur) istatistikler.kategoriDetaylari[secilenTur].kazanma++;
             gunlukGorevIlerlemeKaydet();

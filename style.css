@@ -282,6 +282,13 @@ body.game-active #oyun-arayuzu {
     text-align: center;
     line-height: 1.4em;
 }
+/* style.css dosyasında bu kuralı bulun ve aşağıdakiyle değiştirin */
+.kelime-bosluk {
+    /* Bu elementin bulunduğu flex satırının tamamını kaplamasını sağlar. */
+    flex-basis: 100%; 
+    /* Elementin kendisinin dikeyde bir boşluk oluşturmasını engeller. */
+    height: 0; 
+}
 #harf-alani {
     display: flex;
     flex-wrap: wrap;
