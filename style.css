@@ -1,4 +1,3 @@
-/* --- TASARIM TEMELLERİ VE DEĞİŞKENLER --- */
 :root {
     --arkaplan-baslangic: #6a85b6;
     --arkaplan-bitis: #bac8e0;
@@ -14,15 +13,12 @@
     --font-aile: 'Nunito', sans-serif;
     --kenar-yumusaklik: 16px;
 }
-
-/* --- GENEL SAYFA AYARLARI --- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
-
 html, body {
     width: 100%;
     height: 100%;
@@ -30,7 +26,6 @@ html, body {
     font-family: var(--font-aile);
     color: var(--metin-renk);
 }
-
 .arkaplan {
     width: 100%;
     height: 100%;
@@ -41,8 +36,6 @@ html, body {
     padding: 1rem;
     position: relative;
 }
-
-/* --- EKRAN GEÇİŞ YÖNETİMİ --- */
 .ekran {
     width: 100%;
     height: 100%;
@@ -57,59 +50,49 @@ html, body {
     justify-content: center;
     align-items: center;
 }
-
 body:not(.game-active) #baslangic-ekrani {
     opacity: 1;
     visibility: visible;
 }
-
 body.game-active #oyun-arayuzu {
     opacity: 1;
     visibility: visible;
 }
-
-/* --- KART TASARIMI (ANA MENÜ, OYUN ALANI) --- */
 .kart {
     background: var(--kart-arkaplan);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--kenar-yumusaklik);
     box-shadow: var(--golge);
-    padding: 2rem;
+    padding: 1.5rem;
     width: 100%;
     max-width: 450px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
     text-align: center;
 }
-
-/* --- BAŞLANGIÇ EKRANI --- */
 .logo {
     max-width: 80%;
-    max-height: 150px;
+    max-height: 120px;
     object-fit: contain;
     align-self: center;
     margin-bottom: -1rem;
 }
-
 #oyun-kurallari h2 {
     font-size: 1.5rem;
     color: var(--ana-renk);
     font-weight: 800;
 }
-
 #oyun-kurallari p {
     font-size: 1rem;
     line-height: 1.6;
 }
-
 #alt-kisim {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
-
 #secim-container {
     display: flex;
     flex-direction: column;
@@ -118,18 +101,15 @@ body.game-active #oyun-arayuzu {
     padding: 1rem;
     border-radius: 12px;
 }
-
 #seviye-secimi, #dil-secimi {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 #seviye-secimi span, #dil-secimi span {
     font-weight: 700;
     font-size: 1rem;
 }
-
 #seviye-secimi button, #dil-secimi button {
     padding: 0.5rem 1rem;
     border: 2px solid transparent;
@@ -140,12 +120,30 @@ body.game-active #oyun-arayuzu {
     background: transparent;
     transition: all 0.2s ease;
 }
-
 #seviye-secimi button.active, #dil-secimi button.active {
     background: var(--ana-renk);
     color: #fff;
 }
-
+.menu-butonlari {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+#basarim-butonu, #istatistik-butonu {
+    padding: 0.8rem;
+    background: var(--ikincil-renk);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+#basarim-butonu:hover, #istatistik-butonu:hover {
+    background: var(--ana-renk);
+    transform: translateY(-2px);
+}
 #oyun-basla {
     padding: 1rem;
     background: var(--yesil);
@@ -161,9 +159,6 @@ body.game-active #oyun-arayuzu {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
 }
-
-
-/* --- OYUN ARAYÜZÜ (ÖNCE MOBİL) --- */
 #oyun-arayuzu {
     gap: 1rem;
     width: 100%;
@@ -172,7 +167,6 @@ body.game-active #oyun-arayuzu {
     display: flex;
     flex-direction: column;
 }
-
 #gorsel-alan {
     flex: 1;
     display: flex;
@@ -180,13 +174,11 @@ body.game-active #oyun-arayuzu {
     align-items: center;
     width: 100%;
 }
-
 #adam-asmaca {
     width: 100%;
     height: 100%;
     max-height: 25vh;
 }
-
 #adam-asmaca .parca {
     stroke: var(--metin-renk);
     stroke-width: 8;
@@ -195,20 +187,15 @@ body.game-active #oyun-arayuzu {
     opacity: 0;
     transition: opacity 0.5s ease;
 }
-
 #adam-asmaca .direk-base, #adam-asmaca .direk, #adam-asmaca .asma, #adam-asmaca .ip {
     opacity: 1;
 }
-
 #adam-asmaca .kafa {
     stroke-width: 6;
 }
-
 .parca-gorunur {
     opacity: 1 !important;
 }
-
-
 #interaktif-alan {
     flex: 2;
     display: flex;
@@ -222,41 +209,62 @@ body.game-active #oyun-arayuzu {
     border-radius: var(--kenar-yumusaklik);
     position: relative;
 }
-
 #ust-panel {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
 }
-
 #kelime-turu {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #fff;
     background: var(--turuncu);
     padding: 0.4rem 0.8rem;
     border-radius: 8px;
     text-transform: uppercase;
+    flex-shrink: 1;
 }
-
+#puan-gostergesi {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--ana-renk);
+    background: rgba(255,255,255,0.7);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+}
 #sure {
-    height: 12px;
+    height: 24px;
     flex-grow: 1;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
 }
-
 #sure-dolgu {
     height: 100%;
     background: var(--kirmizi);
     width: 100%;
     border-radius: 12px;
 }
-#sure-text { display: none; }
-
+#sure-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
 #kelime-alani {
     display: flex;
     flex-wrap: wrap;
@@ -264,7 +272,6 @@ body.game-active #oyun-arayuzu {
     gap: 0.5rem;
     min-height: 50px;
 }
-
 .harf-kutusu {
     font-size: clamp(1.5rem, 8vw, 2.5rem);
     font-weight: 800;
@@ -275,7 +282,6 @@ body.game-active #oyun-arayuzu {
     text-align: center;
     line-height: 1.4em;
 }
-
 #harf-alani {
     display: flex;
     flex-wrap: wrap;
@@ -284,7 +290,6 @@ body.game-active #oyun-arayuzu {
     width: 100%;
     padding: 5px;
 }
-
 #harf-alani button {
     flex: 1 1 35px;
     max-width: 50px;
@@ -297,7 +302,6 @@ body.game-active #oyun-arayuzu {
     aspect-ratio: 1 / 1;
     transition: all 0.2s ease;
 }
-
 #harf-alani button:hover:not(:disabled) {
     background: #fff;
     transform: translateY(-2px);
@@ -306,7 +310,6 @@ body.game-active #oyun-arayuzu {
     opacity: 0.4;
     transform: none !important;
 }
-
 .dogru-harf {
     background: var(--yesil) !important;
     color: #fff !important;
@@ -315,14 +318,12 @@ body.game-active #oyun-arayuzu {
     background: var(--kirmizi) !important;
     color: #fff !important;
 }
-
 #buton-konteyner {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
     width: 100%;
 }
-
 #buton-konteyner button {
     padding: 0.7rem;
     border: none;
@@ -334,12 +335,10 @@ body.game-active #oyun-arayuzu {
     transition: transform 0.2s;
 }
 #buton-konteyner button:hover { transform: scale(1.05); }
-
 #ipucu-buton { background: var(--ikincil-renk); }
 #soruyu-yenile { background: var(--turuncu); }
 #anasayfaya-don { background: var(--ana-renk); }
 
-/* --- POPUP PENCERELERİ --- */
 #popup-backdrop {
     display: none;
     position: fixed;
@@ -349,7 +348,6 @@ body.game-active #oyun-arayuzu {
     backdrop-filter: blur(5px);
     z-index: 999;
 }
-
 .popup {
     display: none;
     flex-direction: column;
@@ -367,22 +365,20 @@ body.game-active #oyun-arayuzu {
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
-
 .popup-goster {
     display: flex !important;
     opacity: 1 !important;
     transform: translate(-50%, -50%) scale(1) !important;
 }
-
 #oyun-sonu { background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #1f2937; }
 #kaybetme-popup { background: linear-gradient(135deg, #f87171, #ef4444); color: #fff; }
+#basarim-popup { background: linear-gradient(135deg, #e0c3fc, #8ec5fc); }
+#istatistik-popup { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
 
 .popup h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-.popup .dogru-kelime { font-size: 1.3rem; font-weight: bold; background: rgba(0,0,0,0.2); padding: 0.2rem 0.5rem; border-radius: 6px; display: inline-block; margin-top: 0.5rem;}
-.skor-detaylari { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; background: rgba(0,0,0,0.1); padding: 1rem; border-radius: 12px; }
-.skor-detaylari p { font-size: 0.9rem; margin: 0;}
-
-.popup-butonlar, #kaybetme-popup > button { display: flex; gap: 1rem; margin-top: 1rem; width: 100%;}
+.skor-detaylari { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.1); padding: 1rem; border-radius: 12px; }
+.skor-detaylari p { font-size: 1.1rem; margin: 0; font-weight: 600;}
+.popup-butonlar { display: flex; gap: 1rem; margin-top: 1rem; width: 100%;}
 .popup button {
     flex: 1;
     padding: 0.8rem;
@@ -392,74 +388,46 @@ body.game-active #oyun-arayuzu {
     cursor: pointer;
     font-weight: 700;
     transition: transform 0.2s;
+    text-align: center;
 }
-.popup button:hover { transform: scale(1.05); }
-#sonraki-kelime { background: var(--yesil); color: #fff; }
-#popup-anasayfaya-don, #popup-anasayfaya-don-kaybetme { background: var(--ana-renk); color: #fff; }
+#sonraki-kelime, #popup-yeniden-oyna { background: var(--yesil); color: #fff; }
+#popup-anasayfaya-don, #popup-anasayfaya-don-kaybetme, .popup-kapat-buton { background: var(--ana-renk); color: #fff; }
 
 #footer {
     position: fixed;
     bottom: 10px;
-    left: 0; /* Eklendi */
-    right: 0; /* Eklendi */
-    text-align: center; /* Eklendi */
+    left: 0;
+    right: 0;
+    text-align: center;
     font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
     text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
-/* --- MASAÜSTÜ VE TABLET İÇİN UYARLAMA --- */
 @media (min-width: 769px) {
-    #oyun-arayuzu {
-        flex-direction: row;
-        max-width: 1000px;
-        height: 600px;
-        gap: 2rem;
-    }
-    #gorsel-alan {
-        flex: 4;
-    }
-    #interaktif-alan {
-        flex: 6;
-        height: 100%;
-        justify-content: center;
-    }
-    #adam-asmaca {
-        max-height: 100%;
-    }
+    #oyun-arayuzu { flex-direction: row; max-width: 1000px; height: 600px; gap: 2rem; }
+    #gorsel-alan { flex: 4; }
+    #interaktif-alan { flex: 6; height: 100%; justify-content: center; }
+    #adam-asmaca { max-height: 100%; }
 }
 
-/* --- Harf Animasyonu --- */
 @keyframes harf-takla-at {
-  from {
-    transform: rotateY(90deg);
-    opacity: 0;
-  }
-  to {
-    transform: rotateY(0deg);
-    opacity: 1;
-  }
+  from { transform: rotateY(90deg); opacity: 0; }
+  to { transform: rotateY(0deg); opacity: 1; }
 }
+.harf-kutusu.yeni-harf { animation: harf-takla-at 0.5s ease-out; }
 
-.harf-kutusu.yeni-harf {
-  animation: harf-takla-at 0.5s ease-out;
-}
-
-/* --- Ekran Titreme Animasyonu --- */
 @keyframes ekran-titret {
   10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
+  20%, 80% { transform: translate3d(1px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+  40%, 60% { transform: translate3d(2px, 0, 0); }
 }
+.ekran-titremesi { animation: ekran-titret 0.3s cubic-bezier(.36,.07,.19,.97) both; }
 
-.ekran-titremesi {
-  animation: ekran-titret 0.5s cubic-bezier(.36,.07,.19,.97) both;
-}
-
-/* --- Kombo Mesajı --- */
 #kombo-mesaji {
     position: absolute;
-    top: 20%;
+    top: 25%;
     left: 50%;
     transform: translateX(-50%);
     font-size: 2.5rem;
@@ -470,65 +438,30 @@ body.game-active #oyun-arayuzu {
     pointer-events: none;
     transition: all 0.5s ease-out;
 }
+#kombo-mesaji.goster { opacity: 1; transform: translateX(-50%) scale(1.2); }
 
-#kombo-mesaji.goster {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.2);
-}
-
-/* --- Başarım Sistemi Stilleri --- */
-#basarim-butonu {
-    width: 100%;
-    padding: 0.8rem;
-    background: var(--ikincil-renk);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 700;
-    transition: all 0.2s ease;
-}
-#basarim-butonu:hover {
-    background: var(--ana-renk);
-    transform: translateY(-2px);
-}
-
-#basarim-popup {
-    background: linear-gradient(135deg, #e0c3fc, #8ec5fc);
-}
-
-#basarim-listesi {
+#basarim-listesi, #istatistik-icerik {
     width: 100%;
     max-height: 60vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    text-align: left;
 }
-
 .basarim-ogesi {
     background: rgba(255, 255, 255, 0.5);
     padding: 1rem;
     border-radius: 12px;
-    text-align: left;
-    opacity: 0.5;
+    opacity: 0.6;
     border-left: 5px solid var(--kirmizi);
 }
-
 .basarim-ogesi.kazanildi {
     opacity: 1;
     border-left-color: var(--yesil);
 }
-
 .basarim-ogesi h3 { margin: 0 0 0.2rem 0; color: var(--ana-renk); }
 .basarim-ogesi p { margin: 0; font-size: 0.9rem; }
-
-#basarim-kapat-buton {
-    margin-top: 1rem;
-    background: var(--ana-renk);
-    color: #fff;
-}
 
 #basarim-bildirimi {
     position: fixed;
@@ -544,6 +477,45 @@ body.game-active #oyun-arayuzu {
     z-index: 2000;
     transition: bottom 0.5s ease-in-out;
 }
-#basarim-bildirimi.goster {
-    bottom: 50px;
+#basarim-bildirimi.goster { bottom: 50px; }
+
+#gunluk-gorev-kutusu {
+    background: rgba(0,0,0,0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px dashed var(--vurgu-renk);
+}
+#gunluk-gorev-kutusu h3 { margin: 0 0 0.5rem 0; color: var(--ana-renk); }
+#gunluk-gorev-aciklama { font-size: 0.9rem; margin-bottom: 0.5rem; }
+.progress-bar {
+    width: 100%;
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    height: 1rem;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+#gunluk-gorev-ilerleme-dolgu {
+    width: 0%;
+    height: 100%;
+    background-color: var(--yesil);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+#gunluk-gorev-durum { font-size: 0.8rem; font-weight: 600; }
+
+#istatistik-icerik table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#istatistik-icerik th, #istatistik-icerik td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--vurgu-renk);
+}
+#istatistik-icerik th {
+    background-color: rgba(0,0,0,0.1);
+    text-align: left;
+}
+#istatistik-icerik td:not(:first-child) {
+    text-align: center;
 }

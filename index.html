@@ -4,23 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ozcelik Inc. Adam Asmaca</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="">
-
     <main class="arkaplan">
-
         <div id="baslangic-ekrani" class="ekran">
             <div class="kart">
                 <img src="logo.png" alt="Oyun Logosu" class="logo">
                 <div id="oyun-kurallari">
                     <h2>Oyun Kuralları</h2>
-                    <p>Gizli kelimeyi bulmak için harfleri tahmin et. 6 yanlış tahmin hakkın ve sınırlı bir süren var. Bol şans!</p>
+                    <p>Gizli kelimeyi bulmak için harfleri tahmin et. Yanlış tahminler ve süre puanını etkiler. İpuçları için puanını kullan!</p>
+                </div>
+                <div id="gunluk-gorev-kutusu">
+                    <h3>Günün Görevi</h3>
+                    <p id="gunluk-gorev-aciklama">Yükleniyor...</p>
+                    <div class="progress-bar">
+                        <div id="gunluk-gorev-ilerleme-dolgu"></div>
+                    </div>
+                    <span id="gunluk-gorev-durum"></span>
                 </div>
                 <div id="alt-kisim">
                     <div id="secim-container">
@@ -36,32 +40,33 @@
                             <button id="en" class="dil-buton">EN</button>
                         </div>
                     </div>
-                    <button id="basarim-butonu">🏆 Başarımlar</button>
+                    <div class="menu-butonlari">
+                        <button id="basarim-butonu">🏆 Başarımlar</button>
+                        <button id="istatistik-butonu">📊 İstatistikler</button>
+                    </div>
                     <button id="oyun-basla" aria-label="Oyunu başlat">Oyuna Başla</button>
                 </div>
             </div>
         </div>
-
         <div id="oyun-arayuzu" class="ekran">
             <div id="gorsel-alan">
                 <svg id="adam-asmaca" viewBox="0 0 200 250">
-                    <line class="parca direk-base" x1="10" y1="240" x2="150" y2="240" />
-                    <line class="parca direk" x1="40" y1="240" x2="40" y2="20" />
-                    <line class="parca asma" x1="40" y1="20" x2="120" y2="20" />
-                    <line class="parca ip" x1="120" y1="20" x2="120" y2="50" />
-                    
-                    <circle class="parca kafa" cx="120" cy="70" r="20" />
-                    <line class="parca govde" x1="120" y1="90" x2="120" y2="160" />
-                    <line class="parca sol-kol" x1="120" y1="110" x2="90" y2="140" />
-                    <line class="parca sag-kol" x1="120" y1="110" x2="150" y2="140" />
-                    <line class="parca sol-bacak" x1="120" y1="160" x2="90" y2="200" />
-                    <line class="parca sag-bacak" x1="120" y1="160" x2="150" y2="200" />
+                    <line class="parca direk-base" x1="10" y1="240" x2="150" y2="240"/>
+                    <line class="parca direk" x1="40" y1="240" x2="40" y2="20"/>
+                    <line class="parca asma" x1="40" y1="20" x2="120" y2="20"/>
+                    <line class="parca ip" x1="120" y1="20" x2="120" y2="50"/>
+                    <circle class="parca kafa" cx="120" cy="70" r="20"/>
+                    <line class="parca govde" x1="120" y1="90" x2="120" y2="160"/>
+                    <line class="parca sol-kol" x1="120" y1="110" x2="90" y2="140"/>
+                    <line class="parca sag-kol" x1="120" y1="110" x2="150" y2="140"/>
+                    <line class="parca sol-bacak" x1="120" y1="160" x2="90" y2="200"/>
+                    <line class="parca sag-bacak" x1="120" y1="160" x2="150" y2="200"/>
                 </svg>
             </div>
-
             <div id="interaktif-alan">
                 <div id="ust-panel">
                     <div id="kelime-turu"></div>
+                    <div id="puan-gostergesi">💰 0</div>
                     <div id="sure">
                         <div id="sure-dolgu"></div>
                         <span id="sure-text">60</span>
@@ -77,49 +82,40 @@
                 </div>
             </div>
         </div>
-
         <div id="popup-backdrop"></div>
-        
         <div id="oyun-sonu" class="popup">
             <h2 id="oyun-sonu-mesaj"></h2>
             <div class="skor-detaylari">
-                <p>Skor: <span id="oyun-sonu-skor"></span></p>
-                <p>Toplam Oyun: <span id="oyun-sonu-toplam"></span></p>
-                <p>Kazanılan: <span id="oyun-sonu-kazanan"></span></p>
-                <p>Oran: <span id="oyun-sonu-oran"></span>%</p>
+                <p>Kazanılan Puan: <span id="oyun-sonu-puan"></span></p>
+                <p>Toplam Puan: <span id="oyun-sonu-toplam-puan"></span></p>
             </div>
             <div class="popup-butonlar">
                 <button id="sonraki-kelime">Sonraki Kelime</button>
                 <button id="popup-anasayfaya-don">Ana Sayfa</button>
             </div>
         </div>
-        
         <div id="kaybetme-popup" class="popup">
             <h2 id="kaybetme-mesaj"></h2>
-            <p>Doğru kelime: <span class="dogru-kelime"></span></p>
-            <div class="skor-detaylari">
-                <p>Skor: <span id="kaybetme-skor"></span></p>
-                <p>Toplam Oyun: <span id="kaybetme-toplam"></span></p>
-                <p>Kazanılan: <span id="kaybetme-kazanan"></span></p>
-                <p>Oran: <span id="kaybetme-oran"></span>%</p>
+            <div class="popup-butonlar">
+                <button id="popup-yeniden-oyna">Yeniden Oyna</button>
+                <button id="popup-anasayfaya-don-kaybetme">Ana Sayfa</button>
             </div>
-            <button id="popup-anasayfaya-don-kaybetme">Ana Sayfa</button>
         </div>
-
         <div id="basarim-popup" class="popup">
             <h2>🏆 Başarımlar</h2>
             <div id="basarim-listesi"></div>
-            <button id="basarim-kapat-buton">Kapat</button>
+            <button class="popup-kapat-buton">Kapat</button>
         </div>
-    
+        <div id="istatistik-popup" class="popup">
+            <h2>📊 İstatistikler</h2>
+            <div id="istatistik-icerik"></div>
+            <button class="popup-kapat-buton">Kapat</button>
+        </div>
         <div id="basarim-bildirimi"></div>
-
     </main>
-    
     <footer id="footer">
         <span>© 2025 Ozcelik Inc. Tüm hakları saklıdır.</span>
     </footer>
-
     <script src="game.js"></script>
 </body>
 </html>
