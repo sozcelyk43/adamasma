@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
             esya: ["TABLE LAMP", "BOOKSHELF", "COMPUTER DESK", "PEN", "NOTEBOOK", "CHAIR", "SOFA", "TELEVISION", "REFRIGERATOR", "OVEN", "WASHING MACHINE", "DISHWASHER", "CURTAIN", "CARPET", "PILLOW", "BLANKET", "MIRROR", "CLOCK", "PLATE", "FORK"]
         }
     };
-
     const body = document.body;
     const kelimeTuruAlani = document.getElementById("kelime-turu");
     const kelimeAlani = document.getElementById("kelime-alani");
@@ -83,8 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const gunlukGorevDurum = document.getElementById("gunluk-gorev-durum");
     const popupKapatButonlari = document.querySelectorAll(".popup-kapat-buton");
 
+    // --- OYUN DEĞİŞKENLERİ ---
     let aktifDil = "tr", secilenTur, secilenKelime, gorunenKelime;
-    let kalanHak, baslangicHak, tahminEdilenHarfler, harfButonlari = [];
+    let kalanHak, baslangicHak, tahminEdilenHarfler = [], harfButonlari = [];
     let puan = 0, zorluk = "kolay";
     let sure, sureInterval;
     let kullanilmisKelimeler = {};
@@ -92,10 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let ipucuKullanildi = false;
     let ipucsuzKazanmaSerisi = 0, ustUsteKazanma = 0;
     let gunlukGorev = {};
-    const ipucuBedeli = 70;
+    const ipucuBedeli = 75;
     const gunlukGorevOdulu = 250;
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+    // --- MERKEZİ VERİ YÖNETİMİ ---
     function istatistikleriGetir() {
         const varsayilan = { toplamOyun: 0, kazananOyun: 0, kategoriDetaylari: {}, kazanilanDiller: {}, kazanilanZorluklar: {} };
         const kayitli = JSON.parse(localStorage.getItem("oyunIstatistikleri"));
@@ -105,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem("oyunIstatistikleri", JSON.stringify(yeniIstatistikler));
     }
 
+    // --- OYUN FONKSİYONLARI ---
     function playSound(type) {
         if (audioCtx.state === 'suspended') { audioCtx.resume(); }
         try {
@@ -189,58 +191,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Fonksiyon tanımına yeni "isHint" parametresini ekliyoruz
-function harfTahminEt(harf, buton, isHint = false) {
-    if (tahminEdilenHarfler.includes(harf) || kalanHak <= 0 || sure <= 0) return;
-
-    // Eğer normal bir tahminse 'tiklama' sesi çal, ipucu ise çalma
-    if (!isHint) {
-        playSound('tiklama');
-    }
-
-    buton.disabled = true;
-    tahminEdilenHarfler.push(harf);
-    let dogruTahmin = secilenKelime.includes(harf);
-    if (dogruTahmin) {
-        // --- YENİ DÜZENLEME BAŞLANGICI ---
-        if (!isHint) {
-            // Eğer bu bir ipucu değilse, komboyu artır
-            komboSayaci++;
-            if (komboSayaci > 1) {
-                let bonusPuan = komboSayaci * 5;
-                puanGuncelle(puan + bonusPuan);
-                komboMesaji.textContent = `KOMBO x${komboSayaci}! +${bonusPuan}`;
-                komboMesaji.classList.add('goster');
-                setTimeout(() => komboMesaji.classList.remove('goster'), 1000);
+    function harfTahminEt(harf, buton, isHint = false) {
+        if (tahminEdilenHarfler.includes(harf) || kalanHak <= 0 || sure <= 0) return;
+        if (!isHint) { playSound('tiklama'); }
+        buton.disabled = true;
+        tahminEdilenHarfler.push(harf);
+        let dogruTahmin = secilenKelime.includes(harf);
+        if (dogruTahmin) {
+            if (!isHint) {
+                komboSayaci++;
+                if (komboSayaci > 1) {
+                    let bonusPuan = komboSayaci * 5;
+                    puanGuncelle(puan + bonusPuan);
+                    komboMesaji.textContent = `KOMBO x${komboSayaci}! +${bonusPuan}`;
+                    komboMesaji.classList.add('goster');
+                    setTimeout(() => komboMesaji.classList.remove('goster'), 1000);
+                }
+            } else {
+                komboSayaci = 0;
             }
+            let oncekiGorunum = [...gorunenKelime];
+            secilenKelime.split('').forEach((h, i) => { if (h === harf) gorunenKelime[i] = h; });
+            kelimeyiGoster();
+            secilenKelime.split('').forEach((h, i) => {
+                if (h === harf && oncekiGorunum[i] === '_') {
+                    if(kelimeAlani.children[i]) kelimeAlani.children[i].classList.add('yeni-harf');
+                }
+            });
+            buton.classList.add("dogru-harf");
+            playSound("dogru");
+            if (!gorunenKelime.includes('_')) oyunBitti(true);
         } else {
-            // Eğer bu bir ipucu ise, mevcut komboyu sıfırla
             komboSayaci = 0;
+            kalanHak--;
+            buton.classList.add("yanlis-harf");
+            playSound("yanlis");
+            adamParcasiGoster();
+            body.classList.add('ekran-titremesi');
+            setTimeout(() => body.classList.remove('ekran-titremesi'), 300);
+            if (kalanHak <= 0) oyunBitti(false);
         }
-        // --- YENİ DÜZENLEME SONU ---
-
-        let oncekiGorunum = [...gorunenKelime];
-        secilenKelime.split('').forEach((h, i) => { if (h === harf) gorunenKelime[i] = h; });
-        kelimeyiGoster();
-        secilenKelime.split('').forEach((h, i) => {
-            if (h === harf && oncekiGorunum[i] === '_') {
-                if(kelimeAlani.children[i]) kelimeAlani.children[i].classList.add('yeni-harf');
-            }
-        });
-        buton.classList.add("dogru-harf");
-        playSound("dogru");
-        if (!gorunenKelime.includes('_')) oyunBitti(true);
-    } else {
-        komboSayaci = 0;
-        kalanHak--;
-        buton.classList.add("yanlis-harf");
-        playSound("yanlis");
-        adamParcasiGoster();
-        body.classList.add('ekran-titremesi');
-        setTimeout(() => body.classList.remove('ekran-titremesi'), 300);
-        if (kalanHak <= 0) oyunBitti(false);
     }
-}
+
     function adamParcasiGoster() {
         const adim = baslangicHak - kalanHak - 1;
         if (adim >= 0 && adim < adamParcalari.length) {
@@ -302,44 +294,35 @@ function harfTahminEt(harf, buton, isHint = false) {
         }
         istatistikler.toplamOyun++;
 
-// oyunBitti fonksiyonu içinde...
-if (kazandi) {
-    let kazanilanPuan = (kalanHak * 10) + sure;
-    puanGuncelle(puan + kazanilanPuan);
-    oyunSonuPuan.textContent = `+${kazanilanPuan}`;
-    oyunSonuToplamPuan.textContent = puan;
-
-    istatistikler.kazananOyun++;
-    if (secilenTur) istatistikler.kategoriDetaylari[secilenTur].kazanma++;
-    gunlukGorevIlerlemeKaydet();
-
-    // --- YENİ DÜZENLEME BAŞLANGICI ---
-    if (!ipucuKullanildi) {
-        // Eğer ipucu kullanılmadıysa...
-        ipucsuzKazanmaSerisi++;
-        ustUsteKazanma++;
-        basarimKontrolEt(); // Başarımları sadece ipucu kullanılmadıysa kontrol et.
-    } else {
-        // Eğer ipucu kullanıldıysa...
-        ipucsuzKazanmaSerisi = 0;
-        ustUsteKazanma = 0; // Normal kazanma serisini de sıfırla.
-    }
-
-    localStorage.setItem('ipucsuzKazanmaSerisi', ipucsuzKazanmaSerisi.toString());
-    localStorage.setItem('ustUsteKazanma', ustUsteKazanma.toString());
-
-    if (!istatistikler.kazanilanDiller) istatistikler.kazanilanDiller = {};
-    istatistikler.kazanilanDiller[aktifDil] = true;
-
-    if (!istatistikler.kazanilanZorluklar) istatistikler.kazanilanZorluklar = {};
-    istatistikler.kazanilanZorluklar[zorluk] = true;
-    // --- YENİ DÜZENLEME SONU ---
-
-    playSound("kazanma");
-}
-// ...
-
-else {
+        if (kazandi) {
+            let kazanilanPuan = (kalanHak * 10) + sure;
+            puanGuncelle(puan + kazanilanPuan);
+            oyunSonuPuan.textContent = `+${kazanilanPuan}`;
+            oyunSonuToplamPuan.textContent = puan;
+            istatistikler.kazananOyun++;
+            if (secilenTur) istatistikler.kategoriDetaylari[secilenTur].kazanma++;
+            gunlukGorevIlerlemeKaydet();
+            
+            if (!ipucuKullanildi) {
+                ipucsuzKazanmaSerisi++;
+                ustUsteKazanma++;
+                basarimKontrolEt();
+            } else {
+                ipucsuzKazanmaSerisi = 0;
+                ustUsteKazanma = 0;
+            }
+            
+            localStorage.setItem('ipucsuzKazanmaSerisi', ipucsuzKazanmaSerisi.toString());
+            localStorage.setItem('ustUsteKazanma', ustUsteKazanma.toString());
+            
+            if (!istatistikler.kazanilanDiller) istatistikler.kazanilanDiller = {};
+            istatistikler.kazanilanDiller[aktifDil] = true;
+            
+            if (!istatistikler.kazanilanZorluklar) istatistikler.kazanilanZorluklar = {};
+            istatistikler.kazanilanZorluklar[zorluk] = true;
+            
+            playSound("kazanma");
+        } else {
             ustUsteKazanma = 0;
             ipucsuzKazanmaSerisi = 0;
             localStorage.setItem('ustUsteKazanma', '0');
@@ -365,8 +348,8 @@ else {
         clearInterval(sureInterval);
         document.onkeydown = null;
         kullanilmisKelimeler = {};
-        dilGuncelle();
         gunlukGorevUIGuncelle();
+        dilGuncelle();
     }
 
     function handleKeydown(e) {
@@ -377,20 +360,7 @@ else {
 
     function ipucuAl() {
         playSound('tiklama');
-        if (puan >= ipucuBedeli) {
-            if (kalanHak > 1 && gorunenKelime.includes('_')) {
-                puanGuncelle(puan - ipucuBedeli);
-                ipucuKullanildi = true;
-                const bilinmeyenHarfler = secilenKelime.split('').filter(h => !tahminEdilenHarfler.includes(h) && h !== ' ');
-                if (bilinmeyenHarfler.length > 0) {
-                    const ipucuHarf = bilinmeyenHarfler[Math.floor(Math.random() * bilinmeyenHarfler.length)];
-                    const buton = harfButonlari.find(b => b.textContent === ipucuHarf);
-                    if(buton && !buton.disabled) {
-                harfTahminEt(ipucuHarf, buton, true);
-                    }
-                }
-            }
-        } else {
+        if (puan < ipucuBedeli) {
             playSound("uyari");
             ipucuButonu.classList.add('ekran-titremesi');
             const originalText = ipucuButonu.textContent;
@@ -399,6 +369,24 @@ else {
                 ipucuButonu.classList.remove('ekran-titremesi');
                 ipucuButonu.textContent = originalText;
             }, 1000);
+            return;
+        }
+        if (kalanHak <= 1 || !gorunenKelime.includes('_')) {
+            return;
+        }
+        const verilebilecekHarfler = secilenKelime
+            .split('')
+            .filter((harf, index, self) => harf !== ' ' && !tahminEdilenHarfler.includes(harf) && self.indexOf(harf) === index);
+        const aktifButonlar = harfButonlari.filter(b => !b.disabled);
+        const gosterilebilecekNihaiHarfler = verilebilecekHarfler.filter(harf => aktifButonlar.some(buton => buton.textContent === harf));
+        if (gosterilebilecekNihaiHarfler.length > 0) {
+            puanGuncelle(puan - ipucuBedeli);
+            ipucuKullanildi = true;
+            const ipucuHarf = gosterilebilecekNihaiHarfler[Math.floor(Math.random() * gosterilebilecekNihaiHarfler.length)];
+            const buton = harfButonlari.find(b => b.textContent === ipucuHarf);
+            if (buton) {
+                harfTahminEt(ipucuHarf, buton, true);
+            }
         }
     }
 
@@ -542,8 +530,7 @@ else {
             gunlukGorevUIGuncelle();
         }
     }
-
-   
+    
     oyunBaslaButonu.onclick = () => { playSound('tiklama'); oyunaBasla(); };
     soruyuYenileButonu.onclick = () => { playSound('tiklama'); oyunaBasla(); };
     anasayfayaDonButonu.onclick = () => { playSound('tiklama'); anasayfayaDon(); };
@@ -589,3 +576,4 @@ else {
     anasayfayaDon();
     verileriYukle();
 });
+
