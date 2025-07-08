@@ -189,12 +189,11 @@ function kelimeyiGoster() {
 
     kelimeAlani.innerHTML = kelimeHTML;
 
-    // YENİ DÜZENLEME: Kelime sayısını ve toplam uzunluğu kontrol et
     const kelimeSayisi = secilenKelime.split(' ').length;
     const toplamKarakter = secilenKelime.length;
 
-    // Eğer kelime 3 veya daha fazlaysa VEYA tek kelime ama 13 karakterden uzunsa "uzun-kelime" sınıfını ekle
-    if (kelimeSayisi >= 3 || toplamKarakter > 13) {
+    // Yeni kural: 2 kelimeden veya 9 karakterden sonra küçült.
+    if (kelimeSayisi >= 2 || toplamKarakter > 9) {
         kelimeAlani.classList.add("uzun-kelime");
     } else {
         kelimeAlani.classList.remove("uzun-kelime");

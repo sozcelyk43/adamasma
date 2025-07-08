@@ -288,11 +288,17 @@ body.game-active #oyun-arayuzu {
     border-bottom-width: 3px; /* Çizgiyi de biraz inceltelim */
 }
 
-.kelime-bosluk:first-of-type {
-    flex-basis: 100%;
-    height: 0;
+/* TAVSİYE EDİLEN NİHAİ KOD */
+.kelime-bosluk {
+    flex-basis: 100%; /* Her boşluk elementi bulunduğu satırın tamamını kaplasın */
+    height: 0;       /* Dikeyde yer kaplamasın */
 }
 
+/* Test için bu kuralı geçici olarak kullanın */
+.kelime-bosluk:first-of-type {
+    flex-basis: 100%; /* Satırı kapla */
+    height: 5px; /* Görünür olması için yükseklik ver */
+}
 #harf-alani {
     display: flex;
     flex-wrap: wrap;
