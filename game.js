@@ -15,13 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ustBaslik: "Ozcelik Inc.", sonraki: "Sonraki Kelime", ipucu: "İpucu", basla: "Oyuna Başla", anasayfa: "Ana Sayfa", yenile: "Yenile", kazandi: "🎉 Tebrikler, kazandınız! 🎉", kaybetti: "😔 Kaybettiniz!", hata: "Bir hata oluştu: ", sure: "Süre: ", sehirler: "Şehirler", meyveler: "Meyveler", hayvanlar: "Hayvanlar", ulkeler: "Ülkeler", yemek: "Yemekler", meslek: "Meslekler", esya: "Eşyalar", kurallar: "Gizli kelimeyi bulmak için harfleri tahmin et. Yanlış tahminler ve süre puanını etkiler. İpuçları için puanını kullan!",
             gunluk_gorev_aciklama: (hedef, kategori) => `"${dil.tr[kategori] || kategori}" kategorisinden ${hedef} kelime bul.`,
             gunluk_gorev_odul: (puan) => `Görev tamamlandı! +${puan} Puan kazandın!`,
-            yetersiz_puan: "Yetersiz Puan!"
+            yetersiz_puan: "Yetersiz Puan!",
+        ipucu_kullanilamaz: "İpucu Kullanılamaz" // YENİ EKLENDİ
+
         },
         en: {
             ustBaslik: "Ozcelik Inc.", sonraki: "Next Word", ipucu: "Hint", basla: "Start Game", anasayfa: "Home", yenile: "New", kazandi: "🎉 Congratulations, you won! 🎉", kaybetti: "😔 You lost!", hata: "An error occurred: ", sure: "Time: ", sehirler: "Cities", meyveler: "Fruits", hayvanlar: "Animals", ulkeler: "Countries", yemek: "Foods", meslek: "Professions", esya: "Items", kurallar: "Guess the letters to find the hidden word. Wrong guesses and time affect your score. Use your score for hints!",
             gunluk_gorev_aciklama: (hedef, kategori) => `Find ${hedef} words from the "${dil.en[kategori] || kategori}" category.`,
             gunluk_gorev_odul: (puan) => `Quest complete! You earned +${puan} Points!`,
-            yetersiz_puan: "Not enough points!"
+            yetersiz_puan: "Not enough points!",
+        ipucu_kullanilamaz: "Hint Not Available" // YENİ EKLENDİ
+
         }
     };
     const kelimeListesi = {
@@ -175,21 +179,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 function kelimeyiGoster() {
-    // Kelime dizisindeki her bir karakteri dönüştür
     const kelimeHTML = gorunenKelime.map(harf => {
         if (harf === ' ') {
-            // Eğer karakter boşluk ise, yeni stilimizi kullan
             return '<span class="kelime-bosluk"></span>';
         } else {
-            // Değilse, normal harf kutusunu kullan
             return `<span class="harf-kutusu">${harf === '_' ? '' : harf}</span>`;
         }
-    }).join(''); // Tüm HTML'i birleştir
+    }).join('');
 
     kelimeAlani.innerHTML = kelimeHTML;
-    kelimeAlani.classList.toggle("uzun-kelime", secilenKelime.length > 12);
-}
 
+    // YENİ DÜZENLEME: Kelime sayısını ve toplam uzunluğu kontrol et
+    const kelimeSayisi = secilenKelime.split(' ').length;
+    const toplamKarakter = secilenKelime.length;
+
+    // Eğer kelime 3 veya daha fazlaysa VEYA tek kelime ama 13 karakterden uzunsa "uzun-kelime" sınıfını ekle
+    if (kelimeSayisi >= 3 || toplamKarakter > 13) {
+        kelimeAlani.classList.add("uzun-kelime");
+    } else {
+        kelimeAlani.classList.remove("uzun-kelime");
+    }
+}
     function harfButonlariOlustur() {
         const alfabe = aktifDil === "tr" ? "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ" : "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         harfAlani.innerHTML = "";
@@ -371,37 +381,57 @@ function kelimeyiGoster() {
         if (buton) harfTahminEt(buton.textContent, buton);
     }
 
-    function ipucuAl() {
-        playSound('tiklama');
-        if (puan < ipucuBedeli) {
-            playSound("uyari");
-            ipucuButonu.classList.add('ekran-titremesi');
-            const originalText = ipucuButonu.textContent;
-            ipucuButonu.textContent = dil[aktifDil].yetersiz_puan;
-            setTimeout(() => {
-                ipucuButonu.classList.remove('ekran-titremesi');
-                ipucuButonu.textContent = originalText;
-            }, 1000);
-            return;
-        }
-        if (kalanHak <= 1 || !gorunenKelime.includes('_')) {
-            return;
-        }
-        const verilebilecekHarfler = secilenKelime
-            .split('')
-            .filter((harf, index, self) => harf !== ' ' && !tahminEdilenHarfler.includes(harf) && self.indexOf(harf) === index);
-        const aktifButonlar = harfButonlari.filter(b => !b.disabled);
-        const gosterilebilecekNihaiHarfler = verilebilecekHarfler.filter(harf => aktifButonlar.some(buton => buton.textContent === harf));
-        if (gosterilebilecekNihaiHarfler.length > 0) {
-            puanGuncelle(puan - ipucuBedeli);
-            ipucuKullanildi = true;
-            const ipucuHarf = gosterilebilecekNihaiHarfler[Math.floor(Math.random() * gosterilebilecekNihaiHarfler.length)];
-            const buton = harfButonlari.find(b => b.textContent === ipucuHarf);
-            if (buton) {
-                harfTahminEt(ipucuHarf, buton, true);
-            }
+   function ipucuAl() {
+    playSound('tiklama');
+
+    // 1. Yetersiz puan kontrolü (Mevcut haliyle doğru çalışıyor)
+    if (puan < ipucuBedeli) {
+        playSound("uyari");
+        ipucuButonu.classList.add('ekran-titremesi');
+        const originalText = ipucuButonu.textContent;
+        ipucuButonu.textContent = dil[aktifDil].yetersiz_puan;
+        setTimeout(() => {
+            ipucuButonu.classList.remove('ekran-titremesi');
+            ipucuButonu.textContent = originalText;
+        }, 1000);
+        return;
+    }
+
+    // 2. Son can veya kelime bitme durumu için YENİ UYARI KONTROLÜ
+    if (kalanHak <= 1 || !gorunenKelime.includes('_')) {
+        playSound("uyari");
+        ipucuButonu.classList.add('ekran-titremesi');
+        const originalText = ipucuButonu.textContent;
+        ipucuButonu.textContent = dil[aktifDil].ipucu_kullanilamaz; // Yeni uyarı metnini kullanıyoruz
+        setTimeout(() => {
+            ipucuButonu.classList.remove('ekran-titremesi');
+            ipucuButonu.textContent = originalText;
+        }, 1000);
+        return; // Fonksiyondan çık
+    }
+
+    // 3. Verilebilecek geçerli bir harf var mı kontrolü (Mevcut haliyle doğru çalışıyor)
+    const verilebilecekHarfler = secilenKelime
+        .split('')
+        .filter((harf, index, self) => harf !== ' ' && !tahminEdilenHarfler.includes(harf) && self.indexOf(harf) === index);
+
+    const aktifButonlar = harfButonlari.filter(b => !b.disabled);
+    const gosterilebilecekNihaiHarfler = verilebilecekHarfler.filter(harf => 
+        aktifButonlar.some(buton => buton.textContent === harf)
+    );
+
+    if (gosterilebilecekNihaiHarfler.length > 0) {
+        puanGuncelle(puan - ipucuBedeli);
+        ipucuKullanildi = true;
+
+        const ipucuHarf = gosterilebilecekNihaiHarfler[Math.floor(Math.random() * gosterilebilecekNihaiHarfler.length)];
+        const buton = harfButonlari.find(b => b.textContent === ipucuHarf);
+
+        if (buton) {
+            harfTahminEt(ipucuHarf, buton, true);
         }
     }
+}
 
     function verileriYukle() {
         puan = parseInt(localStorage.getItem('toplamPuan')) || 0;
