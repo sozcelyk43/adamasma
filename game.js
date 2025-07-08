@@ -298,14 +298,75 @@ function kelimeyiGoster() {
         document.onkeydown = handleKeydown;
     }
 
-    function oyunBitti(kazandi) {
-        clearInterval(sureInterval);
-        document.onkeydown = null;
-        if (harfButonlari) harfButonlari.forEach(btn => btn.disabled = true);
-        ipucuButonu.disabled = true;
-        
+   function oyunBitti(kazandi) {
+    clearInterval(sureInterval);
+    document.onkeydown = null;
+    if (harfButonlari) harfButonlari.forEach(btn => btn.disabled = true);
+    ipucuButonu.disabled = true;
+
+    if (kazandi) {
+        // --- YENİ EFEKT BAŞLANGICI ---
+
+        // 1. Konfetiyi ve kelimeyi göster
+        const konfeti = new Konfeti();
+        konfeti.start();
+
+        const zaferKelimesi = document.createElement('div');
+        zaferKelimesi.id = 'zafer-kelimesi-kutusu';
+        zaferKelimesi.innerHTML = secilenKelime.replace(/ /g, '<br>'); // Boşlukları alt satıra indir
+        document.body.appendChild(zaferKelimesi);
+
+        // 2. İstatistikleri ve puanı hesapla (pop-up görünmeden önce)
         let istatistikler = istatistikleriGetir();
-        
+        if (secilenTur) {
+            if (!istatistikler.kategoriDetaylari[secilenTur]) {
+                istatistikler.kategoriDetaylari[secilenTur] = { oynama: 0, kazanma: 0 };
+            }
+            istatistikler.kategoriDetaylari[secilenTur].oynama++;
+        }
+        istatistikler.toplamOyun++;
+        istatistikler.kazananOyun++;
+        if (secilenTur) istatistikler.kategoriDetaylari[secilenTur].kazanma++;
+        gunlukGorevIlerlemeKaydet();
+
+        if (!ipucuKullanildi) {
+            ipucsuzKazanmaSerisi++;
+            ustUsteKazanma++;
+            basarimKontrolEt();
+        } else {
+            ipucsuzKazanmaSerisi = 0;
+            ustUsteKazanma = 0;
+        }
+        localStorage.setItem('ipucsuzKazanmaSerisi', ipucsuzKazanmaSerisi.toString());
+        localStorage.setItem('ustUsteKazanma', ustUsteKazanma.toString());
+        if (!istatistikler.kazanilanDiller) istatistikler.kazanilanDiller = {};
+        istatistikler.kazanilanDiller[aktifDil] = true;
+        if (!istatistikler.kazanilanZorluklar) istatistikler.kazanilanZorluklar = {};
+        istatistikler.kazanilanZorluklar[zorluk] = true;
+        istatistikleriKaydet(istatistikler);
+
+        let kazanilanPuan = (kalanHak * 10) + sure;
+        puanGuncelle(puan + kazanilanPuan);
+        oyunSonuPuan.textContent = `+${kazanilanPuan}`;
+        oyunSonuToplamPuan.textContent = puan;
+
+        playSound("kazanma");
+
+        // 3. Gecikmeden sonra pop-up'ı göster
+        setTimeout(() => {
+            konfeti.stop();
+            document.body.removeChild(zaferKelimesi);
+
+            document.getElementById('kazanan-kelime').textContent = secilenKelime;
+            popupBackdrop.style.display = "block";
+            oyunSonuAlani.classList.add("popup-goster");
+
+        }, 4000); // 2.5 saniye bekle
+
+        // --- YENİ EFEKT SONU ---
+
+    } else { // Kaybetme durumu (Değişiklik yok)
+        let istatistikler = istatistikleriGetir();
         if (secilenTur) {
             if (!istatistikler.kategoriDetaylari[secilenTur]) {
                 istatistikler.kategoriDetaylari[secilenTur] = { oynama: 0, kazanma: 0 };
@@ -314,54 +375,19 @@ function kelimeyiGoster() {
         }
         istatistikler.toplamOyun++;
 
-        if (kazandi) {
-            let kazanilanPuan = (kalanHak * 10) + sure;
-            puanGuncelle(puan + kazanilanPuan);
-            oyunSonuPuan.textContent = `+${kazanilanPuan}`;
-            oyunSonuToplamPuan.textContent = puan;
-        document.getElementById('kazanan-kelime').textContent = secilenKelime;
-
-            istatistikler.kazananOyun++;
-            if (secilenTur) istatistikler.kategoriDetaylari[secilenTur].kazanma++;
-            gunlukGorevIlerlemeKaydet();
-            
-            if (!ipucuKullanildi) {
-                ipucsuzKazanmaSerisi++;
-                ustUsteKazanma++;
-                basarimKontrolEt();
-            } else {
-                ipucsuzKazanmaSerisi = 0;
-                ustUsteKazanma = 0;
-            }
-            
-            localStorage.setItem('ipucsuzKazanmaSerisi', ipucsuzKazanmaSerisi.toString());
-            localStorage.setItem('ustUsteKazanma', ustUsteKazanma.toString());
-            
-            if (!istatistikler.kazanilanDiller) istatistikler.kazanilanDiller = {};
-            istatistikler.kazanilanDiller[aktifDil] = true;
-            
-            if (!istatistikler.kazanilanZorluklar) istatistikler.kazanilanZorluklar = {};
-            istatistikler.kazanilanZorluklar[zorluk] = true;
-            
-            playSound("kazanma");
-        } else {
-            ustUsteKazanma = 0;
-            ipucsuzKazanmaSerisi = 0;
-            localStorage.setItem('ustUsteKazanma', '0');
-            localStorage.setItem('ipucsuzKazanmaSerisi', '0');
-            playSound("kaybetme");
-        }
+        ustUsteKazanma = 0;
+        ipucsuzKazanmaSerisi = 0;
+        localStorage.setItem('ustUsteKazanma', '0');
+        localStorage.setItem('ipucsuzKazanmaSerisi', '0');
         istatistikleriKaydet(istatistikler);
-        
-        const popup = kazandi ? oyunSonuAlani : kaybetmePopup;
-        if (!kazandi) {
-            kaybetmeMesaj.innerHTML = `${dil[aktifDil].kaybetti} <br>Doğru kelime: <span class="dogru-kelime">${secilenKelime || ""}</span>`;
-        } else {
-            oyunSonuMesaj.textContent = dil[aktifDil].kazandi;
-        }
+
+        playSound("kaybetme");
+
+        kaybetmeMesaj.innerHTML = `${dil[aktifDil].kaybetti} <br>Doğru kelime: <span class="dogru-kelime">${secilenKelime || ""}</span>`;
         popupBackdrop.style.display = "block";
-        popup.classList.add("popup-goster");
+        kaybetmePopup.classList.add("popup-goster");
     }
+}
 
     function anasayfayaDon() {
         body.classList.remove("game-active");
@@ -522,6 +548,78 @@ function kelimeyiGoster() {
         popupBackdrop.style.display = 'block';
         istatistikPopup.classList.add('popup-goster');
     }
+
+// game.js dosyasının en sonuna, }); satırından önce ekleyin
+
+// --- KONFETİ FONKSİYONU ---
+function Konfeti() {
+    const canvas = document.getElementById('konfeti-alani');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
+    const colors = ['#f94144', '#f3722c', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#577590'];
+
+    function Particle(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 7 + 3;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 + 1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.angle = Math.random() * 360;
+        this.spin = Math.random() < 0.5 ? -1 : 1;
+    }
+
+    Particle.prototype.update = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.angle += 5 * this.spin;
+        if (this.y > canvas.height) {
+            this.y = -10;
+            this.x = Math.random() * canvas.width;
+        }
+    }
+
+    Particle.prototype.draw = function() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle * Math.PI / 180);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+    }
+
+    function createParticles() {
+        for (let i = 0; i < 150; i++) {
+            particles.push(new Particle(Math.random() * canvas.width, Math.random() * -canvas.height));
+        }
+    }
+
+    let animationFrameId;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+        animationFrameId = requestAnimationFrame(animate);
+    }
+
+    this.start = function() {
+        canvas.style.display = 'block';
+        particles = [];
+        createParticles();
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        animate();
+    }
+
+    this.stop = function() {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'none';
+    }
+}
 
     function gunlukGorevYukle() {
         const bugunTarih = new Date().toDateString();
