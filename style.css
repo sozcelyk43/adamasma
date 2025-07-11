@@ -283,30 +283,10 @@ body.game-active #oyun-arayuzu {
     line-height: 1.4em;
 }
 
-.uzun-kelime .harf-kutusu {
-    font-size: clamp(1rem, 6vw, 1.8rem); /* Küçültülmüş boyutlar */
-    border-bottom-width: 3px; /* Çizgiyi de biraz inceltelim */
-}
-
-/* TAVSİYE EDİLEN NİHAİ KOD */
-.kelime-bosluk {
-    flex-basis: 100%; /* Her boşluk elementi bulunduğu satırın tamamını kaplasın */
-    height: 0;       /* Dikeyde yer kaplamasın */
-}
-
-/* Test için bu kuralı geçici olarak kullanın */
-.kelime-bosluk:first-of-type {
-    flex-basis: 100%; /* Satırı kapla */
-    height: 5px; /* Görünür olması için yükseklik ver */
-}
-#harf-alani {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 5px;
-}
+.uzun-kelime .harf-kutusu {    font-size: clamp(1rem, 6vw, 1.8rem);    border-bottom-width: 3px; }
+.kelime-bosluk {    flex-basis: 100%;     height: 0; }
+.kelime-bosluk:first-of-type {    flex-basis: 100%;    height: 5px; }
+#harf-alani {    display: flex;    flex-wrap: wrap;    justify-content: center;    gap: 8px;    width: 100%;    padding: 5px;}
 #harf-alani button {
     flex: 1 1 35px;
     max-width: 50px;
@@ -466,17 +446,8 @@ body.game-active #oyun-arayuzu {
     gap: 1rem;
     text-align: left;
 }
-.basarim-ogesi {
-    background: rgba(255, 255, 255, 0.5);
-    padding: 1rem;
-    border-radius: 12px;
-    opacity: 0.6;
-    border-left: 5px solid var(--kirmizi);
-}
-.basarim-ogesi.kazanildi {
-    opacity: 1;
-    border-left-color: var(--yesil);
-}
+.basarim-ogesi {background: rgba(255, 255, 255, 0.5);padding: 1rem;border-radius: 12px;opacity: 0.6;border-left: 5px solid var(--kirmizi);}
+.basarim-ogesi.kazanildi {    opacity: 1;    border-left-color: var(--yesil);}
 .basarim-ogesi h3 { margin: 0 0 0.2rem 0; color: var(--ana-renk); }
 .basarim-ogesi p { margin: 0; font-size: 0.9rem; }
 
@@ -496,62 +467,19 @@ body.game-active #oyun-arayuzu {
 }
 #basarim-bildirimi.goster { bottom: 50px; }
 
-#gunluk-gorev-kutusu {
-    background: rgba(0,0,0,0.1);
-    padding: 1rem;
-    border-radius: 12px;
-    border: 2px dashed var(--vurgu-renk);
-}
+#gunluk-gorev-kutusu {background: rgba(0,0,0,0.1);padding: 1rem;border-radius: 12px;border: 2px dashed var(--vurgu-renk);}
 #gunluk-gorev-kutusu h3 { margin: 0 0 0.5rem 0; color: var(--ana-renk); }
 #gunluk-gorev-aciklama { font-size: 0.9rem; margin-bottom: 0.5rem; }
-.progress-bar {
-    width: 100%;
-    background-color: rgba(255,255,255,0.5);
-    border-radius: 10px;
-    height: 1rem;
-    overflow: hidden;
-    margin-bottom: 0.25rem;
-}
-#gunluk-gorev-ilerleme-dolgu {
-    width: 0%;
-    height: 100%;
-    background-color: var(--yesil);
-    border-radius: 10px;
-    transition: width 0.5s ease;
-}
+.progress-bar {width: 100%; background-color: rgba(255,255,255,0.5);border-radius: 10px;height: 1rem;overflow: hidden;margin-bottom: 0.25rem;}
+#gunluk-gorev-ilerleme-dolgu {width: 0%;height: 100%;background-color: var(--yesil);border-radius: 10px;    transition: width 0.5s ease;}
 #gunluk-gorev-durum { font-size: 0.8rem; font-weight: 600; }
+#istatistik-icerik table {width: 100%;border-collapse: collapse;}
+#istatistik-icerik th, #istatistik-icerik td {padding: 0.75rem;border-bottom: 1px solid var(--vurgu-renk);}
+#istatistik-icerik th {    background-color: rgba(0,0,0,0.1);    text-align: left;}
+#istatistik-icerik td:not(:first-child) {    text-align: center;}
 
-#istatistik-icerik table {
-    width: 100%;
-    border-collapse: collapse;
-}
-#istatistik-icerik th, #istatistik-icerik td {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--vurgu-renk);
-}
-#istatistik-icerik th {
-    background-color: rgba(0,0,0,0.1);
-    text-align: left;
-}
-#istatistik-icerik td:not(:first-child) {
-    text-align: center;
-}
+#konfeti-alani {position: fixed;top: 0;left: 0;width: 100%;    height: 100%;    z-index: 9998;    pointer-events: none;display: none; }
 
-/* style.css dosyasının en sonuna ekleyin */
-
-/* Konfeti efektinin çizileceği alan */
-#konfeti-alani {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9998; /* Pop-up'ların arkasında, ama diğer her şeyin önünde */
-    pointer-events: none; /* Üzerine tıklanmasını engeller */
-    display: none; /* Başlangıçta gizli */
-}
-
-/* Kazanma anında çıkan büyük kelime */
 #zafer-kelimesi-kutusu {
     position: fixed;
     top: 50%;
@@ -580,3 +508,7 @@ body.game-active #oyun-arayuzu {
   }
 }
 
+#oyun-sonu p {font-size: 1.5rem;font-weight: 700;color: #1a5e20;background-color: rgba(255, 255, 255, 0.4);padding: 0.75rem;border-radius: 12px;margin: 
+    0.5rem 0;display: flex;align-items: center;justify-content: center;gap: 0.5rem;}
+
+#oyun-sonu p .dogru-kelime {color: #004d40;font-weight: 800;background: none;padding: 0;}
