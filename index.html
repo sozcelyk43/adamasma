@@ -1,128 +1,337 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ozcelik Inc. Adam Asmaca</title>
+    <title>Ozcelik Inc. Hangman Adventure</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/toast.css">
 </head>
-<body class="">
-    <canvas id="konfeti-alani"></canvas>
 
+<body>
     <main class="arkaplan">
+        <div id="star-background"></div>
+
+        <canvas id="konfeti-alani"></canvas>
+
         <div id="baslangic-ekrani" class="ekran">
             <div class="kart">
-                <img src="logo.png" alt="Oyun Logosu" class="logo">
+                <h1 id="oyun-baslik" class="oyun-baslik">
+                </h1>
+
                 <div id="oyun-kurallari">
-                    <h2>Oyun Kuralları</h2>
-                    <p>Gizli kelimeyi bulmak için harfleri tahmin et. Yanlış tahminler ve süre puanını etkiler. İpuçları için puanını kullan!</p>
+                    <h2 id="oyun-kurallari-baslik">Oyun Kuralları</h2>
+                    <p>Gizli kelimeyi bulmak için harfleri tahmin et. Yanlış tahminler ve süre puanını etkiler. İpuçları
+                        için puanını kullan!</p>
                 </div>
+
+                <div class="menu-scroller">
+                    <div class="scroller-track">
+                        <div id="klasik-oyun-basla" class="menu-card" data-emoji="𓍯"
+                            style="--card-rgb-color: 52, 152, 219;"> <span class="card-emoji">𓍯</span>
+                            <span id="klasik-oyun-basla-text" class="card-text"></span>
+                        </div>
+                        <div id="kategori-sec-basla" class="menu-card" data-emoji="🫳"
+                            style="--card-rgb-color: 241, 196, 15;"> <span class="card-emoji">🫳</span>
+                            <span id="kategori-sec-text" class="card-text">KENDİN SEÇ</span>
+                        </div>
+                        <div id="macera-modu-basla" class="menu-card" data-emoji="🧭"
+                            style="--card-rgb-color: 26, 188, 156;"> <span class="card-emoji">🧭</span>
+                            <span id="macera-modu-basla-text" class="card-text"></span>
+                        </div>
+                        <div id="time-attack-basla" class="menu-card" data-emoji="⏳"
+                            style="--card-rgb-color: 231, 76, 60;"> <span class="card-emoji">⏳</span>
+                            <span id="time-attack-basla-text" class="card-text"></span>
+                        </div>
+                        <div id="basarim-butonu" class="menu-card" data-emoji="🏆"
+                            style="--card-rgb-color: 155, 89, 182;"> <span class="card-emoji">🏆</span>
+                            <span id="basarimlar-text" class="card-text"></span>
+                        </div>
+                        <div id="istatistik-butonu" class="menu-card" data-emoji="📋"
+                            style="--card-rgb-color: 189, 195, 199;"> <span class="card-emoji">📋</span>
+                            <span id="istatistikler-text" class="card-text"></span>
+                        </div>
+
+                    </div>
+                </div>
+
                 <div id="gunluk-gorev-kutusu">
-                    <h3>Günün Görevi</h3>
+                    <h3 id="gunluk-gorev-baslik"></h3>
                     <p id="gunluk-gorev-aciklama">Yükleniyor...</p>
                     <div class="progress-bar">
                         <div id="gunluk-gorev-ilerleme-dolgu"></div>
                     </div>
                     <span id="gunluk-gorev-durum"></span>
                 </div>
-                <div id="alt-kisim">
-                    <div id="secim-container">
-                        <div id="seviye-secimi">
-                            <span>Seviye:</span>
-                            <button id="kolay" class="seviye-buton active">Kolay</button>
-                            <button id="orta" class="seviye-buton">Orta</button>
-                            <button id="zor" class="seviye-buton">Zor</button>
-                        </div>
-                        <div id="dil-secimi">
-                            <span>Dil:</span>
+
+                <div id="secim-container">
+                    <div id="puan-gostergesi">💰 0</div>
+                    <div id="dil-secimi">
+                        <span id="dil-secimi-yazi"></span>
+                        <div class="dil-buton-grup">
                             <button id="tr" class="dil-buton active">TR</button>
                             <button id="en" class="dil-buton">EN</button>
                         </div>
                     </div>
-                    <div class="menu-butonlari">
-                        <button id="basarim-butonu">🏆 Başarımlar</button>
-                        <button id="istatistik-butonu">📊 İstatistikler</button>
-                    </div>
-                    <button id="oyun-basla" aria-label="Oyunu başlat">Oyuna Başla</button>
                 </div>
             </div>
         </div>
+
         <div id="oyun-arayuzu" class="ekran">
             <div id="gorsel-alan">
-                <svg id="adam-asmaca" viewBox="0 0 200 250">
-                    <line class="parca direk-base" x1="10" y1="240" x2="150" y2="240"/>
-                    <line class="parca direk" x1="40" y1="240" x2="40" y2="20"/>
-                    <line class="parca asma" x1="40" y1="20" x2="120" y2="20"/>
-                    <line class="parca ip" x1="120" y1="20" x2="120" y2="50"/>
-                    <circle class="parca kafa" cx="120" cy="70" r="20"/>
-                    <line class="parca govde" x1="120" y1="90" x2="120" y2="160"/>
-                    <line class="parca sol-kol" x1="120" y1="110" x2="90" y2="140"/>
-                    <line class="parca sag-kol" x1="120" y1="110" x2="150" y2="140"/>
-                    <line class="parca sol-bacak" x1="120" y1="160" x2="90" y2="200"/>
-                    <line class="parca sag-bacak" x1="120" y1="160" x2="150" y2="200"/>
-                </svg>
+                <div class="hilal">🌙</div>
+                <div class="yildizlar">
+                    <span class="yildiz y-1">⭐</span>
+                    <span class="yildiz y-2">🌟</span>
+                    <span class="yildiz y-3">✨</span>
+                </div>
+
+                <div id="adam-asmaca-alani">
+                    <div class="direk"></div>
+
+                    <div class="agac">
+                        <div class="kus kus-1">🦉</div>
+                        <div class="kus kus-2">🐦</div>
+                    </div>
+                    <div id="adam">
+                        <div class="parca kafa">
+                            <span class="emoji-ifade">😊</span> <span class="emoji-ifade">😟</span> <span
+                                class="emoji-ifade">😠</span> <span class="emoji-ifade">😡</span> <span
+                                class="emoji-ifade">💀</span> <span class="emoji-ifade">😁</span>
+                        </div>
+                        <div class="parca govde"></div>
+                        <div class="parca sol-kol"></div>
+                        <div class="parca sag-kol"></div>
+                        <div class="parca sol-bacak"></div>
+                        <div class="parca sag-bacak"></div>
+                    </div>
+                </div>
             </div>
             <div id="interaktif-alan">
                 <div id="ust-panel">
                     <div id="kelime-turu"></div>
-                    <div id="puan-gostergesi">💰 0</div>
+                    <div id="oyun-ici-puan">⭐ 0</div>
+                    <div id="kalan-hak-gostergesi"></div>
+                    <div id="macera-bilgisi"></div>
+                    <div id="time-attack-skor" style="display: none;">💥 0</div>
                     <div id="sure">
                         <div id="sure-dolgu"></div>
                         <span id="sure-text">60</span>
                     </div>
                 </div>
-                <div id="kombo-mesaji"></div>
+
                 <div id="kelime-alani"></div>
                 <div id="harf-alani"></div>
-                <div id="buton-konteyner">
-                    <button id="ipucu-buton">İpucu</button>
-                    <button id="soruyu-yenile">Yenile</button>
-                    <button id="anasayfaya-don">Ana Sayfa</button>
+                <div class="birlesik-buton-konteyner">
+                    <div id="guc-lendirme-konteyner">
+                        <button id="guc-harf-ele">💥 Harf Ele</button>
+                        <button id="guc-sure-dondur">❄️ Dondur</button>
+                        <button id="guc-ekstra-hak">❤️ Ekstra Hak</button>
+                    </div>
+                    <div id="buton-konteyner">
+                        <button id="ipucu-buton">
+                            <span class="buton-ikon">🪄</span>
+                            <span class="buton-metin">İpucu</span>
+                        </button>
+                        <button id="soruyu-yenile">
+                            <span class="buton-ikon">🔄️</span>
+                            <span class="buton-metin">Yenile</span>
+                        </button>
+                        <button id="anasayfaya-don">
+                            <span class="buton-ikon">🏠</span>
+                            <span class="buton-metin">Ana Sayfa</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="popup-backdrop"></div>
-<div id="oyun-sonu" class="popup">
-    <h2 id="oyun-sonu-mesaj"></h2>
 
-    <p>Doğru kelime: <span class="dogru-kelime" id="kazanan-kelime"></span></p>
+        <div id="macera-ekrani" class="ekran">
+            <div id="macera-arkaplan"></div>
 
-    <div class="skor-detaylari">
-        <p>Kazanılan Puan: <span id="oyun-sonu-puan"></span></p>
-        <p>Toplam Puan: <span id="oyun-sonu-toplam-puan"></span></p>
-    </div>
-    <div class="popup-butonlar">
-        <button id="popup-anasayfaya-don">Ana Sayfa</button>
-        <button id="sonraki-kelime">Sonraki Kelime</button>
-
-    </div>
-</div>
-        <div id="kaybetme-popup" class="popup">
-            <h2 id="kaybetme-mesaj"></h2>
-            <div class="popup-butonlar">
-                <button id="popup-anasayfaya-don-kaybetme">Ana Sayfa</button>
-                <button id="popup-yeniden-oyna">Yeniden Oyna</button>
-
+            <div class="kart tema-macera">
+                <button id="macera-kapat-x" class="kapat-x-buton">&times;</button>
+                <h2 id="macera-haritasi-baslik"></h2>
+                <div id="seviye-haritasi">
+                </div>
+                <button id="haritadan-anasayfaya-don" class="macera-buton"></button>
             </div>
         </div>
+
+        <div id="popup-backdrop"></div>
+
+        <div id="oyun-sonu" class="popup">
+            <div class="detayli-popup-icerik tema-kazandi">
+                <button class="popup-kapat-buton kapat-x-buton">&times;</button>
+                <div class="popup-ikon">🎉</div>
+                <h2 id="oyun-sonu-baslik" class="popup-baslik">HARİKA!</h2>
+                <div class="popup-bilgi-kutusu">
+                    <p><span>Doğru Kelime:</span> <strong id="kazanan-kelime-detay"></strong></p>
+                    <p><span>Kazanılan Puan:</span> <strong id="kazanilan-puan-detay"></strong></p>
+                    <p><span>Toplam Puan:</span> <strong id="toplam-puan-detay"></strong></p>
+                </div>
+                <div class="popup-butonlar">
+                    <button id="popup-anasayfaya-don">🏠 Ana Sayfa</button>
+                    <button id="sonraki-buton">➡️ Sonraki</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="kaybetme-popup" class="popup">
+            <div class="detayli-popup-icerik tema-kaybetti">
+                <button class="popup-kapat-buton kapat-x-buton">&times;</button>
+                <div class="popup-ikon">😔</div>
+                <h2 id="kaybetme-baslik" class="popup-baslik">KAYBETTİN!</h2>
+                <p class="popup-alt-mesaj">Bir dahaki sefere başarılar!</p>
+                <div class="popup-bilgi-kutusu">
+                    <p><span>Doğru Kelime:</span> <strong id="kaybedilen-kelime-detay"></strong></p>
+                    <p><span>Kaybedilen Puan:</span> <strong id="kaybedilen-puan-detay"></strong></p>
+                    <p><span>Toplam Puan:</span> <strong id="kalan-puan-detay"></strong></p>
+                </div>
+                <div class="popup-butonlar">
+                    <button id="popup-anasayfaya-don-kaybetme">🏠 Ana Sayfa</button>
+                    <button id="popup-yeniden-oyna">🔄️ Tekrar Oyna</button>
+                </div>
+            </div>
+        </div>
+
         <div id="basarim-popup" class="popup">
-            <h2>🏆 Başarımlar</h2>
+            <button class="kapat-x-buton">&times;</button>
+            <h2 id="basarim-popup-baslik"></h2>
             <div id="basarim-listesi"></div>
-            <button class="popup-kapat-buton">Kapat</button>
         </div>
+
         <div id="istatistik-popup" class="popup">
-            <h2>📊 İstatistikler</h2>
+            <button class="kapat-x-buton">&times;</button>
+            <h2 id="istatistik-popup-baslik"></h2>
             <div id="istatistik-icerik"></div>
-            <button class="popup-kapat-buton">Kapat</button>
         </div>
+
+        <div id="anasayfa-onay-popup" class="popup">
+            <button class="kapat-x-buton">&times;</button>
+            <div class="popup-mesaj-alani">
+                <span class="popup-ikon">🤔</span>
+                <h2 id="onay-popup-baslik" class="popup-baslik"></h2>
+                <p id="onay-popup-aciklama" class="popup-alt-mesaj"></p>
+            </div>
+            <div class="popup-butonlar">
+                <button id="onay-evet-anasayfa">
+                    <span class="buton-ikon">👋</span>
+                    <span id="onay-evet-metin" class="buton-metin"></span>
+                </button>
+                <button id="onay-hayir-anasayfa">
+                    <span class="buton-ikon">🎮</span>
+                    <span id="onay-hayir-metin" class="buton-metin"></span>
+                </button>
+            </div>
+        </div>
+
+        <div id="seviye-secim-popup" class="popup">
+            <button class="kapat-x-buton">&times;</button>
+            <h2 id="seviye-secim-baslik"></h2>
+            <p id="seviye-secim-aciklama"></p>
+            <div class="seviye-secim-kartlari">
+                <div class="seviye-kart" id="seviye-kolay">
+                    <span class="seviye-kart-ikon">🌱</span>
+                    <h3 id="seviye-kolay-baslik"></h3>
+                    <p id="seviye-kolay-aciklama" class="seviye-kart-bilgi"></p>
+                </div>
+                <div class="seviye-kart" id="seviye-orta">
+                    <span class="seviye-kart-ikon">🌿</span>
+                    <h3 id="seviye-orta-baslik"></h3>
+                    <p id="seviye-orta-aciklama" class="seviye-kart-bilgi"></p>
+                </div>
+                <div class="seviye-kart" id="seviye-zor">
+                    <span class="seviye-kart-ikon">🌳</span>
+                    <h3 id="seviye-zor-baslik"></h3>
+                    <p id="seviye-zor-aciklama" class="seviye-kart-bilgi"></p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="cikis-uyari-arkaplan"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+            <div id="cikis-uyari-kutusu"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; color: #333; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 80%; max-width: 400px;">
+                <h2 style="margin-top: 0;">Çıkmak İstiyor Musunuz? 🤔</h2>
+                <p style="margin-bottom: 20px;">Oyundan ayrılmak istediğinize emin misiniz?</p>
+                <div style="display: flex; justify-content: space-around;">
+                    <button id="evet-cikis"
+                        style="padding: 10px 20px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Evet,
+                        Çık</button>
+                    <button id="hayir-devam"
+                        style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">Hayır,
+                        Devam Et</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="cikis-onay-popup" class="popup">
+            <div class="popup-mesaj-alani">
+                <span class="popup-ikon">👋</span>
+                <h2 id="cikis-onay-baslik" class="popup-baslik">Uygulamadan Çık</h2>
+                <p id="cikis-onay-aciklama" class="popup-alt-mesaj">Çıkmak istediğinize emin misiniz?</p>
+            </div>
+            <div class="popup-butonlar">
+                <button id="onay-evet-cikis">Evet, Çık</button>
+                <button id="onay-hayir-cikis">Hayır, Kal</button>
+            </div>
+        </div>
+        <div id="time-attack-sonu-popup" class="popup">
+            <button class="kapat-x-buton">&times;</button>
+            <h2 id="time-attack-sonu-baslik">Süre Doldu!</h2>
+            <p id="time-attack-sonu-aciklama">İşte bu turdaki performansın:</p>
+
+            <div class="skor-detaylari">
+                <p><span id="ta-dogru-detay">Doğru: 0 (+0 Puan)</span></p>
+                <p><span id="ta-yanlis-detay">Yanlış: 0 (0 Puan)</span></p>
+                <hr style="width:100%; border-color: rgba(255,255,255,0.2);">
+                <p><strong id="ta-toplam-puan">Toplam Puan: 0</strong></p>
+            </div>
+            <div class="popup-butonlar">
+                <button id="time-attack-anasayfa">🏠 Ana Sayfa</button>
+                <button id="time-attack-tekrar-oyna">🔄️ Tekrar Oyna</button>
+            </div>
+        </div>
+        <div id="kombo-bildirimi"></div>
         <div id="basarim-bildirimi"></div>
+
+        <div id="kategori-secim-popup" class="popup">
+            <button class="kapat-x-buton">&times;</button>
+            <h2 id="kategori-secim-baslik">Kategori Seç</h2>
+            <p id="kategori-secim-aciklama">Oynamak istediğin bir kategori seç!</p>
+            <div id="kategori-listesi">
+            </div>
+        </div>
+
+        <div id="guncelleme-uyari-popup" class="popup">
+            <button id="guncelleme-kapat-buton" class="kapat-x-buton">&times;</button>
+            <div class="popup-mesaj-alani">
+                <span class="popup-ikon">🚀</span>
+                <h2 id="guncelleme-popup-baslik" class="popup-baslik">Yeni Sürüm Mevcut!</h2>
+                <p id="guncelleme-popup-aciklama" class="popup-alt-mesaj">Harika yenilikler için güncelleyin.</p>
+            </div>
+            <div class="popup-butonlar">
+                <button id="guncelleme-sonra-buton">Daha Sonra</button>
+                <button id="guncelleme-simdi-buton">Şimdi Güncelle</button>
+            </div>
+        </div>
+
     </main>
     <footer id="footer">
-        <span>© 2025 Ozcelik Inc. Tüm hakları saklıdır.</span>
+        <span id="footer-text"></span>
     </footer>
+    <script src="macera.js"></script>
+    <script src="kelimeler.js"></script>
+    <script src="js/toast.js"></script>
     <script src="game.js"></script>
+
 </body>
+
 </html>
